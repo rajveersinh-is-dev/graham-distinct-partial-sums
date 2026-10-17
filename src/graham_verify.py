@@ -28,6 +28,7 @@ from typing import List, Optional, Sequence, Set, Tuple
 
 # ---------------------------------------------------------------- Part A: integers
 
+
 def find_valid_ordering_integers(A: Sequence[int]) -> Optional[Tuple[int, ...]]:
     """Backtracking search for a valid ordering (distinct integer partial sums).
 
@@ -48,6 +49,15 @@ def find_valid_ordering_integers(A: Sequence[int]) -> Optional[Tuple[int, ...]]:
     result: List[int] = []
 
     def bt(k: int) -> bool:
+        """Bt.
+        
+        Args:
+            k:
+        
+        Returns:
+            bool: Result of type bool
+        
+        """
         nonlocal cur
         if k == n:
             return True
@@ -77,6 +87,7 @@ def find_valid_ordering_integers(A: Sequence[int]) -> Optional[Tuple[int, ...]]:
 
 # ---------------------------------------------------------------- Part B: mod p
 
+
 def centered_rep(a: int, p: int) -> int:
     """Least absolute residue of a mod p in (-(p-1)/2, (p-1)/2]. For p odd, in
     {-(p-1)/2,...,(p-1)/2}."""
@@ -87,6 +98,16 @@ def centered_rep(a: int, p: int) -> int:
 
 
 def is_valid_mod_p(ordering: Sequence[int], p: int) -> bool:
+    """Is valid mod p.
+    
+    Args:
+        ordering:
+        p:
+    
+    Returns:
+        bool: Result of type bool
+    
+    """
     seen: Set[int] = set()
     s = 0
     for x in ordering:
