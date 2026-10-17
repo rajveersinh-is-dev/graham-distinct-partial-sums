@@ -18,8 +18,14 @@
 - mathematics/main_results.md, mathematics/proofs.md written.
 
 ## Remaining work
-- Write LaTeX paper (paper/main.tex + references.bib).
-- Add tests/ (test_width.py).
-- docs/reproducibility.md.
-- Create public GitHub repo, commit, push.
-- Honest limitations: σ_+(P)=σ_-(N) case uncovered; full conjecture still open.
+- Write LaTeX paper (paper/main.tex + references.bib). DONE
+- Add tests/ (test_width.py). DONE — all tests pass.
+- docs/reproducibility.md. DONE.
+- Create public GitHub repo, commit, push. DONE:
+  https://github.com/rajveersinh-is-dev/graham-distinct-partial-sums
+  Public, default branch main, commit 2120503 pushed and verified to match origin/main.
+
+## Final state
+- New result: Theorem 1 (width sufficient condition) — PROVED HERE, rigorous partial result.
+- Limitations: sum(P)=sum(N) case uncovered; full Graham conjecture still open.
+- Final verdict: Category C — Rigorous Partial Result.
