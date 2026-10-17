@@ -15,18 +15,18 @@ We verify by brute force on many small sets.
 
 from __future__ import annotations
 
-from functools import lru_cache
 from itertools import permutations
 from typing import List, Optional, Sequence, Tuple
 
 
 # ---------------------------------------------------------------- base cases
 
+
 def _order_pair_base(P: List[int], N: List[int]) -> Tuple[List[int], List[int]]:
     """Orderings of P and N whose prefix sums avoid each other except endpoints.
     Handles |P| <= 1 directly; used as induction base."""
     assert len(P) <= 1
-    if len(P) == 0:
+    if not P:
         # Any ordering of N works: P's only prefix is the empty sum 0.
         return [], list(N)
     # |P| == 1 : P = [p].  Need an ordering of N with no proper prefix summing to p.
@@ -74,6 +74,7 @@ def _order_pair_base(P: List[int], N: List[int]) -> Tuple[List[int], List[int]]:
 
 # ----------------------------------------------------------- induction step
 
+
 def order_pair(P: List[int], N: List[int]) -> Tuple[List[int], List[int]]:
     """Return orderings of P and N such that
     sum(P[:i]) != sum(N[:j]) for all (i,j) except (0,0) and (|P|,|N|).
@@ -102,6 +103,15 @@ def order_pair(P: List[int], N: List[int]) -> Tuple[List[int], List[int]]:
 
 
 def valid_ordering_integers(A: Sequence[int]) -> List[int]:
+    """Valid ordering integers.
+    
+    Args:
+        A:
+    
+    Returns:
+        The computed result
+    
+    """
     elems = list(A)
     assert all(x != 0 for x in elems), "no zeros"
     assert len(elems) == len(set(elems)), "distinct"
@@ -112,6 +122,15 @@ def valid_ordering_integers(A: Sequence[int]) -> List[int]:
 
 
 def partial_sums(ordering: Sequence[int]) -> List[int]:
+    """Partial sums.
+    
+    Args:
+        ordering:
+    
+    Returns:
+        The computed result
+    
+    """
     out, s = [], 0
     for x in ordering:
         s += x
@@ -120,11 +139,21 @@ def partial_sums(ordering: Sequence[int]) -> List[int]:
 
 
 def is_valid(ordering: Sequence[int]) -> bool:
+    """Is valid.
+    
+    Args:
+        ordering:
+    
+    Returns:
+        The computed result
+    
+    """
     sums = partial_sums(ordering)
     return len(sums) == len(set(sums))
 
 
 # --------------------------------------------------------------- brute force
+
 
 def brute_force_valid_ordering(A: Sequence[int]) -> Optional[Tuple[int, ...]]:
     """Search all permutations for one with distinct partial sums (small sets)."""
