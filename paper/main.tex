@@ -1,0 +1,252 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{url}
+\usepackage{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{remark}[theorem]{Remark}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\title{A Width Sufficient Condition for Graham's Distinct Partial Sums Conjecture}
+\author{Autonomous Mathematical Research Project}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Graham's conjecture (1971, repeated by Erd\H{o}s) asserts that every subset
+$A\subseteq\mathbb F_p\setminus\{0\}$ admits an ordering whose partial sums
+are pairwise distinct modulo $p$. The conjecture remains open in general; the
+best-known results cover $|A|\le 12$, $|A|\in\{p-2,p-3\}$, and (recently)
+$|A|\le \lceil \log p/\log\log p\rceil$ via rectification.
+
+We prove a new, complementary sufficient condition. Lift $A$ to centered
+representatives in $(-(p-1)/2,(p-1)/2)$, and let $P$ and $N$ be the positive
+representatives and the magnitudes of the negative ones. If
+$\sum P < p$, $\sum N < p$, and $\sum P\ne\sum N$, then $A$ is sequenceable
+modulo $p$. This covers sets of size up to about $\sqrt{2p}$ (for instance
+$A=\{1,\dots,k\}$ with $k(k+1)/2<p$), well beyond the rectification range.
+
+The proof is elementary: a self-contained integer-ordering lemma, proved by
+induction through repeatedly removing an element from the side of strictly
+larger total, produces orderings whose prefix sums avoid each other; the
+resulting integer partial sums are distinct and lie in an interval of width
+$<p$, hence are distinct modulo $p$.
+
+All claims are accompanied by explicit evidence categories; the theorem and
+its proof are given unconditionally, and the construction is verified
+computationally on all small cases and thousands of random instances. The
+general conjecture remains open; the uncovered subcase $\sum P=\sum N$ is
+identified as the smallest remaining gap.
+\end{abstract}
+
+\section{Introduction}
+
+\subsection{The problem}
+For a finite subset $A$ of an abelian group, call an ordering
+$a_1,\dots,a_n$ of its elements \emph{valid} if the partial sums
+\[
+  s_k=a_1+a_2+\cdots+a_k,\qquad 1\le k\le n,
+\]
+are pairwise distinct. Graham's conjecture (1971; repeated by Erd\H{o}s and
+Graham \cite{EG80}, Problem 475) asserts:
+
+\begin{conjecture}[Graham]
+For every prime $p$ and every $A\subseteq\mathbb F_p\setminus\{0\}$, the set
+$A$ admits a valid ordering modulo $p$.
+\end{conjecture}
+
+Such sets are called \emph{sequenceable}. The conjecture is connected to
+sequencing of groups, complete mappings, Latin transversals (Snevily's
+conjecture, now solved by Arsovski \cite{arsovski2011}), and the Hall--Paige
+conjecture. Despite considerable attention \cite{costa2020, costa2022,
+hicks2019}, it remains open in general.
+
+\subsection{State of the art}
+According to Kravitz \cite{kravitz2024}, the conjecture is known to hold for
+$|A|\le 12$ (polynomial method / Combinatorial Nullstellensatz), for
+$|A|\in\{p-2,p-3\}$ \cite{hicks2019}, and Kravitz proves it for
+$|A|\le\lceil\log p/\log\log p\rceil$ using Lev's rectification theorem
+\cite{lev2008} together with the integer version
+\cite{kravitz2024,sawin2015}. The general case (arbitrary $|A|$) is open.
+
+\subsection{Our result}
+We give a sufficient condition that is orthogonal to cardinality: it depends
+on the size of the centered representatives rather than on their number.
+
+\begin{theorem}[Width sufficient condition]\label{thm:main}
+Let $p$ be prime and $A\subseteq\mathbb F_p\setminus\{0\}$. Choose centered
+representatives $a'\in\{-(p-1)/2,\dots,(p-1)/2\}\setminus\{0\}$ for each
+$a\in A$, and put
+\[
+  P=\{a':a'>0\},\qquad N=\{-a':a'<0\}.
+\]
+If
+\[
+  \sum P < p,\qquad \sum N < p,\qquad \sum P\ne\sum N,
+\]
+then $A$ is sequenceable modulo $p$.
+\end{theorem}
+
+The condition includes sets of size up to roughly $\sqrt{2p}$. For example:
+
+\begin{corollary}\label{cor:consecutive}
+If $A=\{1,2,\dots,k\}\subseteq\mathbb F_p^\times$ satisfies
+$k(k+1)/2<p$, then $A$ is sequenceable modulo $p$.
+\end{corollary}
+
+This is not implied by the rectification range when $k\gg\log p/\log\log p$.
+
+\section{Definitions}
+
+Let $A=\{a_1,\dots,a_n\}\subseteq\mathbb F_p\setminus\{0\}$. An ordering is
+a permutation $b_1,\dots,b_n$ of $A$. Its partial sums are
+$s_k=b_1+\cdots+b_k$. The ordering is valid if $s_1,\dots,s_n$ are pairwise
+distinct in $\mathbb F_p$. Equivalently, no nonempty consecutive block sums
+to zero. $A$ is sequenceable if some ordering is valid.
+
+Centered representatives: each residue class mod $p$ is represented by its
+unique element in $\{-(p-1)/2,\dots,(p-1)/2\}$.
+
+\section{An integer ordering lemma}
+
+\begin{lemma}\label{lem:ordering}
+Let $P,N$ be finite sets of positive integers with $\sum P\ne\sum N$. Then
+there exist orderings of $P$ and of $N$ such that no nonempty prefix-sum of
+$P$ equals a prefix-sum of $N$ (the empty prefix-sum $0$ is common).
+\end{lemma}
+
+\begin{proof}
+Induct on $|P|+|N|$. If one side is empty, its only prefix-sum is $0$ while
+every nonempty prefix-sum of the other side is positive, so the claim holds.
+
+Assume $\sum P>\sum N$ (the other case is symmetric). Then $P\ne\varnothing$.
+Choose $p^*\in P$ with $p^*\ne\sum P-\sum N$: if $|P|\ge2$, at most one
+element equals $\sum P-\sum N$, so another choice exists; if $P=\{p\}$ is a
+singleton, then $p=\sum P>\sum N$ and $p\ne p-\sum N$ since $\sum N>0$.
+Set $P'=P\setminus\{p^*\}$. Then $\sum P'=\sum P-p^*\ne\sum N$ by the
+choice of $p^*$, so the induction hypothesis gives orderings of $P'$ and $N$
+whose nonempty prefix-sums are disjoint.
+
+Order $P$ as the ordering of $P'$ followed by $p^*$. Its nonempty prefix-sums
+are those of $P'$ together with the full sum $\sum P$. Since
+$\sum P>\sum N\ge$ (every nonempty prefix-sum of $N$), the full sum $\sum P$
+is not a prefix-sum of $N$. Hence no nonempty prefix-sum of $P$ equals a
+prefix-sum of $N$. The case $\sum N>\sum P$ is symmetric.
+\end{proof}
+
+\section{Proof of the main theorem}
+
+\begin{proof}[Proof of Theorem \ref{thm:main}]
+By Lemma 1 choose orderings of $P$ and $N$ whose nonempty prefix-sums are
+disjoint. Output the ordering of $A'$
+\[
+  \operatorname{reverse}(P\text{-ordering})\quad\text{followed by}\quad
+  (-n\ \text{for }n\in N\text{-ordering}).
+\]
+Let $S_1,\dots,S_n$ be the integer partial sums.
+
+\textbf{Distinctness as integers.} The positive phase (reverse of the
+$P$-ordering) has strictly increasing partial sums, all in $(0,\sum P]$.
+The negative phase has strictly decreasing partial sums. A cross-phase
+collision $S_i=S_j$ would require
+\[
+  \sum P-q=\sum P-n
+\]
+for $q$ a (proper or empty) prefix-sum of the $P$-ordering and $n$ a
+nonempty prefix-sum of the $N$-ordering, i.e. $q=n$. By Lemma 1 this cannot
+happen: no nonempty prefix-sum of $P$ equals a prefix-sum of $N$, and $q=0$
+would require $n=0$, not allowed. Hence $S_1,\dots,S_n$ are distinct
+integers.
+
+\textbf{Range bound.} Every partial sum lies in $[m,M]$ with
+$M=\sum P$ and $m=\min(1,\sum P-\sum N)$: the positive phase lies in
+$(0,\sum P]\subseteq[1,\sum P]$, and the negative phase lies in
+$[\sum P-\sum N,\sum P)$. Thus all partial sums lie in an interval of width
+\[
+  W=\sum P-\min(1,\sum P-\sum N).
+\]
+If $\sum P>\sum N$, then $\sum P-\sum N\ge1$, so $W=\sum P-1<p-1<p$.
+If $\sum N>\sum P$, then $W=\sum N<p$. In either case $W<p$.
+
+\textbf{Modulo $p$.} The $S_k$ are distinct integers in an interval of width
+$W<p$. If $S_i\equiv S_j\pmod p$ for $i\ne j$, then $p\mid(S_i-S_j)$, so
+$|S_i-S_j|\ge p$, contradicting $|S_i-S_j|\le W<p$. Hence the partial sums
+are pairwise distinct modulo $p$.
+\end{proof}
+
+\section{Limitations and remaining questions}
+
+The hypothesis $\sum P\ne\sum N$ is technical: the case $\sum P=\sum N$
+(i.e. the centered representatives sum to $0$) is not covered by this proof.
+It is sequenceable in every small case checked, but a general proof of that
+subcase remains a small open gap. More generally, Graham's conjecture for
+arbitrary $|A|$ (in particular sets whose centered representatives have large
+absolute sum) remains open. A natural strengthening is the question of
+two-sided valid orderings raised in \cite{kravitz2024}.
+
+\section{Evidence categories}
+
+\begin{itemize}
+\item \textbf{PROVED HERE:} Theorem \ref{thm:main}, Corollary
+\ref{cor:consecutive}, Lemma \ref{lem:ordering}.
+\item \textbf{ESTABLISHED IN PRIOR WORK:} the integer version of Graham's
+conjecture \cite{kravitz2024,sawin2015}; Lev's rectification theorem
+\cite{lev2008}; the state-of-the-art summary \cite{kravitz2024}.
+\item \textbf{COMPUTATIONALLY VERIFIED (finite):} Theorem \ref{thm:main}'s
+construction was checked exhaustively for every width-satisfying subset of
+$\mathbb F_p^\times$ for $p\le 23$ and on thousands of random instances, with
+complete agreement against brute force (see \texttt{tests/}, \texttt{src/}).
+\end{itemize}
+
+\section*{Acknowledgements}
+This project was carried out autonomously. The problem was identified via the
+Open Problem Garden and the arXiv preprint \cite{kravitz2024}; all code and
+write-up are original to this project.
+
+\begin{thebibliography}{99}
+
+\bibitem{EG80} P. Erd\H{o}s and R. L. Graham, \emph{Old and new problems and
+results in combinatorial number theory}, L'Enseignement Mathématique,
+Université de Genève, 1980.
+
+\bibitem{kravitz2024} N. Kravitz, Rearranging small sets for distinct partial
+sums, arXiv:2407.01835 [math.CO], 2024.
+
+\bibitem{sawin2015} W. Sawin, comment on ``Ordering subsets of the cyclic
+group to give distinct partial sums,'' MathOverflow,
+\url{https://mathoverflow.net/q/202857}, 2015.
+
+\bibitem{lev2008} V. Lev, The rectifiability threshold in abelian groups,
+\emph{Combinatorica} 28 (2008), 491--497.
+
+\bibitem{blr1998} Y. Bilu, V. Lev, I. Ruzsa, Rectification principles in
+additive number theory, \emph{Discrete Comput. Geom.} 19 (1998), 343--353.
+
+\bibitem{hicks2019} J. Hicks, M. Ollis, J. Schmitt, Distinct partial sums in
+cyclic groups: polynomial method and constructive approaches,
+\emph{J. Combin. Des.} 27 (2019), 369--385.
+
+\bibitem{costa2020} S. Costa, M. A. Pellegrini, Some new results about a
+conjecture by Brian Alspach, \emph{Arch. Math. (Basel)} 115 (2020), 479--488.
+
+\bibitem{costa2022} S. Costa, S. Della Fiore, M. Ollis, S. Rovner-Frydman,
+On sequences in cyclic groups with distinct partial sums,
+\emph{Electron. J. Combin.} 29 (2022), \#33.
+
+\bibitem{arsovski2011} B. Arsovski, A proof of Snevily's conjecture,
+\emph{Israel J. Math.} 182 (2011), 505--508.
+
+\bibitem{hough2015} B. Hough, Solution of the minimum modulus problem for
+covering systems, \emph{Ann. of Math.} 181 (2015), 361--382.
+
+\end{thebibliography}
+
+\end{document}

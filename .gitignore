@@ -1,0 +1,14 @@
+# .gitignore
+__pycache__/
+*.py[c]
+*.pyo
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.pdf
+.DS_Store
+.idea/
+.vscode/
