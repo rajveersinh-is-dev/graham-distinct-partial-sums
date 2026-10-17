@@ -15,12 +15,12 @@ are distinct mod p.  => WIDTH SUFFICIENT CONDITION (PROVED HERE).
 
 from __future__ import annotations
 
-from typing import List, Optional, Sequence, Tuple
+from typing import List, Sequence, Tuple
 
 
 def _base_case(P: List[int], N: List[int]) -> Tuple[List[int], List[int]]:
     """|P| <= 1.  Orderings of P and N with prefix sums avoiding except endpoints."""
-    if len(P) == 0:
+    if not P:
         return [], list(N)  # P's only prefix sum is 0; no positive N-prefix is 0
     p = P[0]
     totalN = sum(N)
@@ -80,6 +80,15 @@ def kravitz_order_pair(P: List[int], N: List[int]) -> Tuple[List[int], List[int]
 
 
 def valid_ordering_kravitz(A: Sequence[int]) -> List[int]:
+    """Valid ordering kravitz.
+    
+    Args:
+        A:
+    
+    Returns:
+        The computed result
+    
+    """
     elems = list(A)
     assert all(x != 0 for x in elems)
     assert len(elems) == len(set(elems))
@@ -90,6 +99,15 @@ def valid_ordering_kravitz(A: Sequence[int]) -> List[int]:
 
 
 def partial_sums(ordering: Sequence[int]) -> list:
+    """Partial sums.
+    
+    Args:
+        ordering:
+    
+    Returns:
+        The computed result
+    
+    """
     out, s = [], 0
     for x in ordering:
         s += x
@@ -98,11 +116,29 @@ def partial_sums(ordering: Sequence[int]) -> list:
 
 
 def is_valid_integers(ordering: Sequence[int]) -> bool:
+    """Is valid integers.
+    
+    Args:
+        ordering:
+    
+    Returns:
+        The computed result
+    
+    """
     sums = partial_sums(ordering)
     return len(sums) == len(set(sums))
 
 
 def range_width(ordering: Sequence[int]) -> int:
+    """Range width.
+    
+    Args:
+        ordering:
+    
+    Returns:
+        The computed result
+    
+    """
     sums = partial_sums(ordering)
     return max(sums) - min(sums) if sums else 0
 
