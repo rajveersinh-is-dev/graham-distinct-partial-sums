@@ -1,3 +1,5 @@
+"""Module for mathematical computation and analysis."""
+
 # Exact-arithmetic verification of Graham's distinct partial sums
 # Integer version (Theorem 1.3, Kravitz 2024 / Sawin 2015):
 #   Every finite A subset Z \ {0} admits an ordering with all partial sums distinct.
@@ -16,6 +18,7 @@
 from __future__ import annotations
 
 from typing import Iterable, List, Tuple
+
 
 
 def valid_ordering_integers(A: Iterable[int]) -> List[int]:
@@ -37,6 +40,15 @@ def valid_ordering_integers(A: Iterable[int]) -> List[int]:
 
 
 def partial_sums(ordering: Iterable[int]) -> List[int]:
+    """Partial sums.
+    
+    Args:
+        ordering:
+    
+    Returns:
+        The computed result
+    
+    """
     out: List[int] = []
     s = 0
     for x in ordering:
@@ -46,11 +58,29 @@ def partial_sums(ordering: Iterable[int]) -> List[int]:
 
 
 def is_valid(ordering: Iterable[int]) -> bool:
+    """Is valid.
+    
+    Args:
+        ordering:
+    
+    Returns:
+        The computed result
+    
+    """
     sums = partial_sums(ordering)
     return len(sums) == len(set(sums))
 
 
 def verify(A: Iterable[int]) -> Tuple[List[int], List[int], bool]:
+    """Check whether the condition holds.
+    
+    Args:
+        A:
+    
+    Returns:
+        tuple: Result of type tuple
+    
+    """
     ordering = valid_ordering_integers(A)
     sums = partial_sums(ordering)
     return ordering, sums, is_valid(ordering)

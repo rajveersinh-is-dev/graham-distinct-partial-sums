@@ -15,7 +15,7 @@ hence they are distinct mod p.
 
 from __future__ import annotations
 
-from typing import List, Optional, Sequence, Tuple
+from typing import List, Sequence, Tuple
 
 import itertools
 
@@ -83,6 +83,15 @@ def valid_ordering_width(A: Sequence[int], p: int) -> List[int]:
 
 
 def partial_sums(ordering: Sequence[int]) -> List[int]:
+    """Partial sums.
+    
+    Args:
+        ordering:
+    
+    Returns:
+        The computed result
+    
+    """
     out, s = [], 0
     for x in ordering:
         s += x
@@ -91,16 +100,44 @@ def partial_sums(ordering: Sequence[int]) -> List[int]:
 
 
 def is_valid_integers(ordering: Sequence[int]) -> bool:
+    """Is valid integers.
+    
+    Args:
+        ordering:
+    
+    Returns:
+        The computed result
+    
+    """
     sums = partial_sums(ordering)
     return len(sums) == len(set(sums))
 
 
 def range_width(ordering: Sequence[int]) -> int:
+    """Range width.
+    
+    Args:
+        ordering:
+    
+    Returns:
+        The computed result
+    
+    """
     sums = partial_sums(ordering)
     return max(sums) - min(sums) if sums else 0
 
 
 def is_valid_mod_p(ordering: Sequence[int], p: int) -> bool:
+    """Is valid mod p.
+    
+    Args:
+        ordering:
+        p:
+    
+    Returns:
+        bool: Result of type bool
+    
+    """
     seen, s = set(), 0
     for x in ordering:
         s = (s + x) % p
