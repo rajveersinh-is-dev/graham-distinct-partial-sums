@@ -18,65 +18,38 @@ from __future__ import annotations
 from typing import List, Optional, Sequence, Tuple
 
 
-def _base_case(P: List[int], N: List[int]) -> Tuple[List[int], List[int]]:
-    """|P| <= 1.  Orderings of P and N with prefix sums avoiding except endpoints."""
-    if len(P) == 0:
-        return [], list(N)  # P's only prefix sum is 0; no positive N-prefix is 0
-    p = P[0]
-    totalN = sum(N)
-    if totalN <= p:
-        # No N-prefix (even full) reaches p except possibly full==p (endpoint).
-        return [p], list(N)
-    # totalN > p: order N ascending, jumping over p so no prefix equals p.
-    Ns = sorted(N)
-    ordering: List[int] = []
-    s = 0
-    i = 0
-    jumped = False
-    while i < len(Ns):
-        x = Ns[i]
-        if not jumped and s + x >= p:
-            if s + x == p:
-                # Would land exactly on p at a proper prefix (totalN>p => more remain).
-                # Swap in a strictly larger remaining element to jump over p.
-                y = None
-                for j in range(i + 1, len(Ns)):
-                    if Ns[j] > x:
-                        y = Ns[j]
-                        break
-                assert y is not None, "distinct elements guarantee a larger element"
-                ordering.append(y)
-                Ns.pop(j)
-                jumped = True
-                s += y
-            else:
-                ordering.append(x)
-                s += x
-                jumped = True
-                i += 1
-        else:
-            ordering.append(x)
-            s += x
-            i += 1
-    ordering.extend(Ns[i:])
-    return [p], ordering
-
-
 def kravitz_order_pair(P: List[int], N: List[int]) -> Tuple[List[int], List[int]]:
     """Inductive construction.  P, N: positive integers, distinct within each list."""
-    if len(P) <= 1:
-        return _base_case(P, N)
-    totalP = sum(P)
-    totalN = sum(N)
-    pstar = None
-    for x in P:
-        if totalP - x != totalN:
-            pstar = x
-            break
-    assert pstar is not None, "need sum(P\\{p*}) != sum(N); |P|>=2 guarantees"
-    Pprime = [x for x in P if x != pstar]
-    Pord, Nord = kravitz_order_pair(Pprime, N)
-    return Pord + [pstar], Nord
+    sP, sN = sum(P), sum(N)
+    if not P:
+        return [], list(N)
+    if not N:
+        return list(P), []
+
+    if sP >= sN:
+        if len(P) == 1:
+            return list(P), list(N)
+        pstar = None
+        for x in P:
+            if sP - x != sN:
+                pstar = x
+                break
+        assert pstar is not None, "need sum(P\\{p*}) != sum(N); |P|>=2 guarantees"
+        Pprime = [x for x in P if x != pstar]
+        Pord, Nord = kravitz_order_pair(Pprime, N)
+        return Pord + [pstar], Nord
+    else:
+        if len(N) == 1:
+            return list(P), list(N)
+        nstar = None
+        for x in N:
+            if sN - x != sP:
+                nstar = x
+                break
+        assert nstar is not None, "need sum(N\\{n*}) != sum(P); |N|>=2 guarantees"
+        Nprime = [x for x in N if x != nstar]
+        Pord, Nord = kravitz_order_pair(P, Nprime)
+        return Pord, Nord + [nstar]
 
 
 def valid_ordering_kravitz(A: Sequence[int]) -> List[int]:
@@ -108,7 +81,7 @@ def range_width(ordering: Sequence[int]) -> int:
 
 
 def verify_range_formula(A: Sequence[int]) -> bool:
-    """Check: range width == max(sum(P'), sum(N)) where P'=P\{p*}."""
+    """Check: range width == max(sum(P'), sum(N)) where P'=P\\{p*}."""
     elems = list(A)
     P = [x for x in elems if x > 0]
     N = [-x for x in elems if x < 0]
