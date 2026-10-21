@@ -2,7 +2,7 @@
 Correct constructive proof of the integer version of Graham's conjecture
 (Theorem 1.3, Kravitz 2024; independently Sawin 2015).
 
-Every finite A subset Z \ {0} admits an ordering with all partial sums distinct.
+Every finite A subset Z \\ {0} admits an ordering with all partial sums distinct.
 
 Construction: split A = P (positives) u {-n : n in N}.  Build orderings of P and N
 such that their prefix sums are unequal except at (0,0) and (|P|,|N|)
@@ -20,58 +20,6 @@ from itertools import permutations
 from typing import List, Optional, Sequence, Tuple
 
 
-# ---------------------------------------------------------------- base cases
-
-def _order_pair_base(P: List[int], N: List[int]) -> Tuple[List[int], List[int]]:
-    """Orderings of P and N whose prefix sums avoid each other except endpoints.
-    Handles |P| <= 1 directly; used as induction base."""
-    assert len(P) <= 1
-    if len(P) == 0:
-        # Any ordering of N works: P's only prefix is the empty sum 0.
-        return [], list(N)
-    # |P| == 1 : P = [p].  Need an ordering of N with no proper prefix summing to p.
-    p = P[0]
-    total = sum(N)
-    if total <= p:
-        # No proper (or full) prefix reaches p, except full==p allowed.
-        return [p], list(N)
-    # total > p : sort ascending, build until we would hit or pass p, jumping over.
-    Ns = sorted(N)
-    ordering: List[int] = []
-    s = 0
-    i = 0
-    jumped = False
-    while i < len(Ns):
-        x = Ns[i]
-        if not jumped and s + x >= p:
-            if s + x == p:
-                # Would land exactly on p at a proper prefix (total>p => more remain).
-                # Swap in a strictly larger remaining element to jump over p.
-                y = None
-                for j in range(i + 1, len(Ns)):
-                    if Ns[j] > x:
-                        y = Ns[j]
-                        break
-                assert y is not None, "distinct elements guarantee a larger element"
-                ordering.append(y)
-                Ns.pop(j)
-                jumped = True
-                s += y
-                # do not consume x; it stays for later
-            else:
-                ordering.append(x)
-                s += x
-                jumped = True  # s + x > p, jumped over
-                i += 1
-        else:
-            ordering.append(x)
-            s += x
-            i += 1
-    # append anything left
-    ordering.extend(Ns[i:])
-    return [p], ordering
-
-
 # ----------------------------------------------------------- induction step
 
 def order_pair(P: List[int], N: List[int]) -> Tuple[List[int], List[int]]:
@@ -82,23 +30,36 @@ def order_pair(P: List[int], N: List[int]) -> Tuple[List[int], List[int]]:
     All elements of P and N must be positive and internally distinct; P and N
     may share values (they come from different sides of zero, so that's fine).
     """
-    if len(P) <= 1:
-        return _order_pair_base(P, N)
+    sP, sN = sum(P), sum(N)
+    if not P:
+        return [], list(N)
+    if not N:
+        return list(P), []
 
-    totalP = sum(P)
-    totalN = sum(N)
-    # Choose p* in P with sum(P\{p*}) != sum(N).  Exists since |P|>=2 (elements distinct).
-    p_star = None
-    for x in P:
-        if totalP - x != totalN:
-            p_star = x
-            break
-    assert p_star is not None, "need sum(P\\{p*}) != sum(N)"
-    Pprime = [x for x in P if x != p_star]
-
-    p_ord, n_ord = order_pair(Pprime, N)
-    # By induction + choice of p_star, prefix sums of Pprime and N avoid everywhere.
-    return p_ord + [p_star], n_ord
+    if sP >= sN:
+        if len(P) == 1:
+            return list(P), list(N)
+        pstar = None
+        for x in P:
+            if sP - x != sN:
+                pstar = x
+                break
+        assert pstar is not None, "need sum(P\\{p*}) != sum(N); |P|>=2 guarantees"
+        Pprime = [x for x in P if x != pstar]
+        p_ord, n_ord = order_pair(Pprime, N)
+        return p_ord + [pstar], n_ord
+    else:
+        if len(N) == 1:
+            return list(P), list(N)
+        nstar = None
+        for x in N:
+            if sN - x != sP:
+                nstar = x
+                break
+        assert nstar is not None, "need sum(N\\{n*}) != sum(P); |N|>=2 guarantees"
+        Nprime = [x for x in N if x != nstar]
+        p_ord, n_ord = order_pair(P, Nprime)
+        return p_ord, n_ord + [nstar]
 
 
 def valid_ordering_integers(A: Sequence[int]) -> List[int]:
