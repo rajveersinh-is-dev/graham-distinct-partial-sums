@@ -2,7 +2,7 @@
 Verification of Graham's distinct partial sums.
 
 Part A: Integer version (ESTABLISHED IN PRIOR WORK: Kravitz 2024, arXiv:2407.01835;
-independently Sawin 2015 MathOverflow). Every finite A subset Z\{0} has a valid
+independently Sawin 2015 MathOverflow). Every finite A subset Z\\{0} has a valid
 ordering (all partial sums distinct as integers). Verified here by exhaustive
 backtracking on small sets (correct by construction: finds an ordering iff one exists).
 
