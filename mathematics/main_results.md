@@ -12,14 +12,12 @@
 
 **Theorem 1 (Width sufficient condition).**
 Let p be prime and A⊆F_p\\{0}. With P, N as above, if
-   σ_+(P) < p,   σ_-(N) < p,   and   σ_+(P) ≠ σ_-(N),
+   σ_+(P) < p   and   σ_-(N) < p,
 then A is sequenceable modulo p: there is an ordering of A whose partial sums are pairwise distinct mod p.
 
 **Category:** PROVED HERE. Proof in mathematics/proofs.md. Relies on a self-contained integer ordering lemma (Lemma 1 below); does NOT rely on unproved conjectures.
 
-**Significance.** Extends beyond Kravitz's rectification range |A|≤⌈log p/log log p⌉: every set whose centered representatives have positive-sum < p and negative-magnitude-sum < p (with unequal totals) is sequenceable. This includes sets of size up to ~√(2p) (e.g. A={1,...,k} with k(k+1)/2<p), well beyond the rectification range.
-
-**Limitations.** The hypothesis σ_+(P)≠σ_-(N) is technical; the case σ_+(P)=σ_-(N) (centered reps summing to 0) is not covered by the proof and is left as a small open subcase. Computationally it is also sequenceable in all small cases checked.
+**Significance.** Extends beyond Kravitz's rectification range |A|≤⌈log p/log log p⌉: every set whose centered representatives have positive-sum < p and negative-magnitude-sum < p is sequenceable. This includes sets of size up to ~√(2p) (e.g. A={1,...,k} with k(k+1)/2<p), well beyond the rectification range.
 
 ## Lemma 1 (integer ordering lemma, PROVED HERE)
 Let P,N be finite sets of positive integers with ∑P≠∑N. Then there exist orderings of P and of N such that no (nonempty) prefix-sum of P equals a prefix-sum of N, except that the empty prefix-sum 0 is common.

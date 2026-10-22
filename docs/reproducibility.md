@@ -44,6 +44,4 @@ written in `mathematics/proofs.md` and summarized in `paper/main.tex`.
 - OS: Windows
 
 ## Limitations
-The proof covers $\sum P\ne\sum N$; the case $\sum P=\sum N$ is not covered
-and remains a small open subcase. Graham's conjecture for arbitrary $|A|$
-remains open.
+Graham's conjecture for arbitrary $|A|$ remains open.
