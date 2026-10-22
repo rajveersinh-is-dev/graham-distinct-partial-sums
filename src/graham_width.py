@@ -70,15 +70,24 @@ def build_orderings(P: List[int], N: List[int]) -> Tuple[List[int], List[int]]:
 
 
 def valid_ordering_width(A: Sequence[int], p: int) -> List[int]:
-    """Centered reps of A mod p; requires width + unequal condition."""
+    """Centered reps of A mod p; requires width condition."""
     reps = [((int(a) % p) - p if (int(a) % p) > p // 2 else (int(a) % p)) for a in A]
     assert all(r != 0 for r in reps), "no zero residues"
     P = sorted([r for r in reps if r > 0])
     N = sorted([-r for r in reps if r < 0])
     sP, sN = sum(P), sum(N)
     assert sP < p and sN < p, "width condition"
-    assert sP != sN, "unequal totals"
-    Pord, Nord = build_orderings(P, N)
+
+    if sP == sN:
+        if not P:
+            return []
+        pstar = P[0]
+        Pprime = P[1:]
+        Pord, Nord = build_orderings(Pprime, N)
+        Pord.append(pstar)
+    else:
+        Pord, Nord = build_orderings(P, N)
+
     return list(reversed(Pord)) + [-n for n in Nord]
 
 
@@ -117,7 +126,7 @@ if __name__ == "__main__":
     random.seed(3)
 
     # Test the construction on integer sets (all nonzero): map via a large p
-    # so width condition holds trivially (sumP<p, sumN<p) and unequal.
+    # so width condition holds trivially (sumP<p, sumN<p).
     print("=== Width construction on random integer sets (p large) ===")
     tested = 0
     fails = 0
@@ -131,17 +140,16 @@ if __name__ == "__main__":
         try:
             ordering = valid_ordering_width(A, p)
         except AssertionError as e:
-            # unequal-totals failure: skip (separate case)
             continue
         tested += 1
         sums = partial_sums(ordering)
         if not is_valid_integers(ordering) or range_width(ordering) >= p:
             fails += 1
             print("FAIL:", A, ordering, sums, "range", range_width(ordering))
-    print(f"tested {tested} (unequal-totals) sets, failures={fails}")
+    print(f"tested {tested} sets, failures={fails}")
 
-    # Test mod-p width corollary exhaustively for small p (unequal case).
-    print("\n=== Mod-p width corollary, exhaustive small p (unequal totals) ===")
+    # Test mod-p width corollary exhaustively for small p.
+    print("\n=== Mod-p width corollary, exhaustive small p ===")
     for p in [5, 7, 11, 13, 17, 19, 23]:
         elems = list(range(1, p))
         cond = 0
@@ -152,15 +160,15 @@ if __name__ == "__main__":
                 P = [x for x in reps if x > 0]
                 N = [-x for x in reps if x < 0]
                 sP, sN = sum(P), sum(N)
-                if sP < p and sN < p and sP != sN:
+                if sP < p and sN < p:
                     cond += 1
                     ordering = valid_ordering_width(subset, p)
                     assert is_valid_mod_p(ordering, p), (p, subset, ordering)
                     ok += 1
-        print(f"  p={p}: width&unequal sets={cond}, all distinct-mod-p={ok}")
+        print(f"  p={p}: width condition sets={cond}, all distinct-mod-p={ok}")
 
-    # Cross-check against brute force: width&unequal => sequenceable (already implied)
-    print("\n=== Cross-check width&unequal vs brute force ===")
+    # Cross-check against brute force
+    print("\n=== Cross-check width condition vs brute force ===")
     for p in [7, 11, 13]:
         elems = list(range(1, p))
         agree = 0
@@ -170,7 +178,7 @@ if __name__ == "__main__":
                 P = [x for x in reps if x > 0]
                 N = [-x for x in reps if x < 0]
                 sP, sN = sum(P), sum(N)
-                if sP < p and sN < p and sP != sN:
+                if sP < p and sN < p:
                     # brute force existence
                     import itertools
                     bf = None
@@ -189,4 +197,4 @@ if __name__ == "__main__":
                     construct_ok = is_valid_mod_p(valid_ordering_width(subset, p), p)
                     assert construct_ok == bf, (p, subset, construct_ok, bf)
                     agree += 1
-        print(f"  p={p}: width&unequal sets cross-checked={agree}")
+        print(f"  p={p}: width condition sets cross-checked={agree}")

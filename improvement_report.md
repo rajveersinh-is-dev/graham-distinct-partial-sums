@@ -4,34 +4,34 @@
 - Repository: autonomous-repository-excellence-engine
 - Branch: jules-improvement
 - Starting commit: HEAD (previous state)
-- Scope examined: Python source files (`src/graham_integer.py`, `src/kravitz.py`, `src/graham_verify.py`), identifying algorithmic flaws and syntax warnings.
+- Scope examined: Mathematical proofs and exact-arithmetic construction of the width sufficient condition (`src/graham_width.py`, `mathematics/proofs.md`, `tests/test_width.py`).
 
 ## B. Improvements implemented
-- **Problem discovered:** The constructive implementations of the integer version of Graham's conjecture in `src/graham_integer.py` and `src/kravitz.py` were mathematically flawed. They implemented an asymmetric induction that failed to prevent prefix sum collisions, resulting in invalid orderings for certain input sets (e.g., 143 failures out of 3000 random sets). Additionally, there were syntax warnings for invalid escape sequences (`\{`) in docstrings in Python 3.12.
-- **Root cause:** The induction logic only reduced the positive set `P`, regardless of whether `sum(P)` was larger or smaller than `sum(N)`. This could cause the sum of the reduced side to land on a prefix sum of the other side.
-- **Solution implemented:** Replaced the asymmetric induction with a symmetric induction algorithm in both `order_pair` (`src/graham_integer.py`) and `kravitz_order_pair` (`src/kravitz.py`). The new algorithm always reduces the side with the strictly larger total sum, matching the correct logic proven in `src/graham_width.py` (`build_orderings`). Also fixed the docstring escape sequences.
-- **Files or components affected:** `src/graham_integer.py`, `src/kravitz.py`, `src/graham_verify.py`.
-- **Expected and demonstrated benefit:** The generated integer orderings are mathematically sound and correct, producing zero duplicate partial sums, and the scripts execute cleanly without warnings.
+- **Problem discovered:** The width sufficient condition theorem and its implementation previously relied on the technical assumption $\sum P \neq \sum N$, leaving the case $\sum P = \sum N$ as a documented "known limitation" and an open subcase for Graham's conjecture.
+- **Root cause:** The core integer ordering lemma (Lemma 1) requires unequal totals to successfully alternate pulling elements from the larger side to prevent prefix sum collisions.
+- **Solution implemented:** Extended the theorem and implementation to formally solve the equal sum subcase. If $\sum P = \sum N > 0$, we extract one element $p^* \in P$, leaving $P'$ and $N$ with unequal totals. Lemma 1 is then applied to $P'$ and $N$. Since $p^*$ is appended at the end of the positive phase, its prefix sum equals $\sum P = \sum N$, but cross-phase collisions are impossible because all proper prefix sums of the positive phase avoid the prefix sums of the negative phase.
+- **Files or components affected:** `src/graham_width.py`, `tests/test_width.py`, `README.md`, `docs/reproducibility.md`, `mathematics/main_results.md`, `mathematics/proofs.md`.
+- **Expected and demonstrated benefit:** The width sufficient condition now fully covers all sets satisfying $\sum P < p$ and $\sum N < p$, entirely eliminating the unequal totals technical limitation and strengthening the main theorem of the repository.
 
 ## C. Verification results
 | Check or command | Actual outcome | Relevant output or evidence | Explanation of limitation |
 | :--- | :--- | :--- | :--- |
-| `python3 src/graham_integer.py` | PASS | `tested 2979 random integer sets, failures=0` | Full exhaustive check run locally. |
-| `python3 src/kravitz.py` | PASS | `tested 4985 random integer sets, failures=0` | Full exhaustive check run locally. |
-| `python3 src/graham_verify.py` | PASS | `tested 3993 random integer sets, failures=0` | Backtracking verification local run. |
-| `pytest tests/` | PASS | `4 passed in 0.81s` | All existing tests continue to pass locally. |
+| `pytest tests/test_width.py` | PASS | `4 passed in 0.82s` | The test suite was updated to include equal-sum sets in the exhaustive check, and all assertions passed. |
+| `python3 src/graham_width.py` | PASS | `p=23: width condition sets=98202, all distinct-mod-p=98202` | Exhaustively checks all small subsets including equal sum cases. Cross-checks against brute force. |
+| `pytest tests/` | PASS | `4 passed in 0.82s` | All existing tests pass locally. |
+| `python3 src/graham_verify.py` | PASS | `tested 3993 random integer sets, failures=0` | Unaffected, still passes completely. |
 
 ## D. Measurable impact
-- Reduced test failures from 143/3000 (`src/graham_integer.py`) and 241/5000 (`src/kravitz.py`) to 0.
-- Eliminated all SyntaxWarning invalid escape sequence warnings during execution.
+- Eliminated a documented limitation from the main mathematical proof.
+- Increased exhaustive check coverage in `src/graham_width.py` by incorporating the previously skipped equal-sum sets. For example, for $p=23$, increased the number of checked subsets from 92342 to 98202 (a ~6% coverage increase).
 
 ## E. Remaining risks
-- The project still notes that Graham's conjecture for arbitrary $|A|$ remains open. However, the exact exact-arithmetic constructions for the width sufficient condition and integer versions are now fully correct and aligned with the proofs.
+- The integer version and small subset computational checks remain correct, but Graham's conjecture for arbitrary $|A|$ and large $p$ still remains unproven, which is the foundational open problem of the project.
 
 ## F. Next-run priorities
-1. Investigate the small open subcase where $\sum P = \sum N$. The computational check indicates it is sequenceable in small cases, but a rigorous proof could elevate the project's impact.
-2. Extend the mod-$p$ brute force checks to verify larger sizes if algorithmic optimizations permit.
-3. Consolidate overlapping test code in `tests/test_width.py` and the `__main__` blocks of individual src files into a unified pytest suite.
+1. Consolidate overlapping test code in `tests/test_width.py` and the `__main__` blocks of individual src files into a unified pytest suite.
+2. Extend the mod-$p$ brute force checks in `src/graham_verify.py` to verify larger sizes if algorithmic optimizations (e.g. converting backtracking to C extension or optimizing Python loops) permit.
+3. Search for algorithmic speedups in `src/graham_verify.py`'s backtracking function `find_valid_ordering_integers` to test significantly larger random integer sets.
 
 ## G. Overall verdict
 VERIFIED IMPROVEMENT
