@@ -26,8 +26,8 @@ genuinely open.
 
 ## Strongest result obtained (this project)
 **Theorem 1 (width sufficient condition — PROVED HERE).** If the centered
-representatives of $A$ satisfy $\sum P<p$ (positives), $\sum N<p$
-(negative magnitudes), and $\sum P\ne\sum N$, then $A$ is sequenceable mod $p$.
+representatives of $A$ satisfy $\sum P<p$ (positives) and $\sum N<p$
+(negative magnitudes), then $A$ is sequenceable mod $p$.
 
 This covers sets of size up to $\sim\sqrt{2p}$ (e.g. $\{1,\dots,k\}$ with
 $k(k+1)/2<p$), beyond the rectification range.
@@ -38,7 +38,7 @@ $k(k+1)/2<p$), beyond the rectification range.
 2. Output reverse(positive part) then negative part; integer partial sums are
    distinct (within-phase monotone, cross-phase avoided by Lemma 1).
 3. The integer partial sums lie in an interval of width $<p$ (using
-   $\sum P<p$, $\sum N<p$, $\sum P\ne\sum N$).
+   $\sum P<p$ and $\sum N<p$).
 4. Distinct integers in an interval of width $<p$ are distinct mod $p$.
 
 ## Novelty qualification
@@ -69,7 +69,6 @@ python tests/test_width.py
 Should print "All tests passed."
 
 ## Known limitations
-- The case $\sum P=\sum N$ is not covered by the proof.
 - Graham's conjecture for arbitrary $|A|$ remains open.
 
 ## Final verdict category

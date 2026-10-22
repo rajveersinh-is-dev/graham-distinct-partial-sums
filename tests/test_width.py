@@ -54,7 +54,7 @@ def test_width_construction_modp_exhaustive():
                 reps = [centered_rep(a, p) for a in subset]
                 P = [x for x in reps if x > 0]
                 N = [-x for x in reps if x < 0]
-                if sum(P) < p and sum(N) < p and sum(P) != sum(N):
+                if sum(P) < p and sum(N) < p:
                     ordering = valid_ordering_width(subset, p)
                     assert is_valid_mod_p(ordering, p), (p, subset, ordering)
                     count += 1
