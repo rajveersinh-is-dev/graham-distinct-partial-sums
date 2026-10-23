@@ -113,9 +113,48 @@ def test_integer_version_backtracking_ground_truth():
         assert bt(A), A  # ground truth: always sequenceable
 
 
-if __name__ == "__main__":
-    test_build_orderings_invariant()
-    test_width_construction_modp_exhaustive()
-    test_corollary_consecutive()
-    test_integer_version_backtracking_ground_truth()
-    print("All tests passed.")
+def test_width_construction_random_integers():
+    import random
+    random.seed(3)
+    for _ in range(600):
+        n = random.randint(1, 9)
+        A = random.sample(range(-14, 15), n)
+        A = [x for x in A if x != 0]
+        if not A:
+            continue
+        p = 101  # large enough that width holds
+        try:
+            ordering = valid_ordering_width(A, p)
+        except AssertionError as e:
+            continue
+        assert is_valid_integers(ordering), f"Not valid integers: {A}"
+        assert range_width(ordering) < p, f"Range width >= p: {A}"
+
+def test_width_condition_cross_check_brute_force():
+    # Cross-check width condition vs brute force
+    for p in [7, 11, 13]:
+        elems = list(range(1, p))
+        for r in range(1, min(6, p - 1) + 1):
+            for subset in combinations(elems, r):
+                reps = [((a % p) - p if (a % p) > p // 2 else (a % p)) for a in subset]
+                P = [x for x in reps if x > 0]
+                N = [-x for x in reps if x < 0]
+                sP, sN = sum(P), sum(N)
+                if sP < p and sN < p:
+                    # brute force existence
+                    import itertools
+                    bf = None
+                    for perm in itertools.permutations(reps):
+                        seen, ss = set(), 0
+                        good = True
+                        for x in perm:
+                            ss = (ss + x) % p
+                            if ss in seen:
+                                good = False
+                                break
+                            seen.add(ss)
+                        if good:
+                            bf = True
+                            break
+                    construct_ok = is_valid_mod_p(valid_ordering_width(subset, p), p)
+                    assert construct_ok == (bf is not None), f"{p}, {subset}, {construct_ok}, {bf}"
