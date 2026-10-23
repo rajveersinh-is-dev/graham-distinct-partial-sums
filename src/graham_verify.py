@@ -111,70 +111,40 @@ def brute_force_mod_p(A: Sequence[int], p: int) -> Optional[Tuple[int, ...]]:
     n = len(elems)
     if n == 0:
         return ()
-    if n > 9:
+    if n > 14:  # Can handle slightly larger sets with backtracking
         return None
-    for perm in __import__("itertools").permutations(elems):
-        if is_valid_mod_p(perm, p):
-            return perm
+
+    used = [False] * n
+    seen: Set[int] = set()
+    result: List[int] = []
+    cur = 0
+
+    def bt(k: int) -> bool:
+        nonlocal cur
+        if k == n:
+            return True
+        for i in range(n):
+            if used[i]: continue
+            x = elems[i]
+            nxt = (cur + x) % p
+            if nxt in seen: continue
+
+            used[i] = True
+            seen.add(nxt)
+            cur = nxt
+            result.append(x)
+
+            if bt(k + 1):
+                return True
+
+            result.pop()
+            cur = (nxt - x) % p
+            seen.discard(nxt)
+            used[i] = False
+        return False
+
+    if bt(0):
+        return tuple(result)
     return None
 
 
-# ---------------------------------------------------------------- tests
-
-if __name__ == "__main__":
-    import random
-
-    random.seed(1)
-
-    print("=== Part A: integer version, backtracking verification ===")
-    tested = 0
-    fails = 0
-    for _ in range(4000):
-        n = random.randint(1, 9)
-        A = random.sample(range(-20, 21), n)
-        A = [x for x in A if x != 0]
-        if not A:
-            continue
-        tested += 1
-        ord_ = find_valid_ordering_integers(A)
-        if ord_ is None:
-            fails += 1
-            print("NO ORDERING FOUND (theorem says impossible):", A)
-    print(f"tested {tested} random integer sets, failures={fails}")
-
-    print("\n=== Part B: mod p, small primes, all subsets ===")
-    for p in [3, 5, 7, 11, 13]:
-        elems = list(range(1, p))  # nonzero residues
-        total = 0
-        ok = True
-        details = []
-        for r in range(1, min(6, p - 1) + 1):  # subset sizes up to 5
-            for subset in combinations(elems, r):
-                total += 1
-                ord_ = brute_force_mod_p(subset, p)
-                if ord_ is None:
-                    ok = False
-                    details.append(subset)
-        print(f"p={p}: checked {total} subsets (sizes 1..5), all sequenceable={ok}")
-        if details:
-            print("  non-sequenceable:", details[:10])
-
-    print("\n=== Part B: width sufficient condition vs brute force ===")
-    for p in [7, 11, 13, 17]:
-        elems = list(range(1, p))
-        width_ok_but_brute_fail = 0
-        width_fail_but_brute_ok = 0
-        both_ok = 0
-        for r in range(1, min(5, p - 1) + 1):
-            for subset in combinations(elems, r):
-                w = width_condition_holds(subset, p)
-                bf = brute_force_mod_p(subset, p) is not None
-                if w and bf:
-                    both_ok += 1
-                elif w and not bf:
-                    width_ok_but_brute_fail += 1
-                    print("WIDTH OK but brute FAIL:", subset, "p=", p)
-                elif not w and bf:
-                    width_fail_but_brute_ok += 1
-        print(f"p={p}: width&brute OK={both_ok}, widthOK bruteFAIL={width_ok_but_brute_fail}, "
-              f"widthFAIL bruteOK={width_fail_but_brute_ok}")

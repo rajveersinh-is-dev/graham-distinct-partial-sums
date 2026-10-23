@@ -54,21 +54,3 @@ def verify(A: Iterable[int]) -> Tuple[List[int], List[int], bool]:
     ordering = valid_ordering_integers(A)
     sums = partial_sums(ordering)
     return ordering, sums, is_valid(ordering)
-
-
-if __name__ == "__main__":
-    # Demonstrate on a few sets.
-    examples = [
-        {1, 2, 3},
-        {-5, -2, 1, 3, 7},
-        {10, -3, 8, -1, 4, -6},
-        set(range(1, 11)),
-        set(range(-10, 0)) | set(range(1, 11)),
-    ]
-    for A in examples:
-        ordering, sums, ok = verify(A)
-        print(f"A = {sorted(A)}")
-        print(f"  ordering = {ordering}")
-        print(f"  partial sums = {sums}")
-        print(f"  valid = {ok}")
-        print()

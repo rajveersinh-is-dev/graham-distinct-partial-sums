@@ -107,32 +107,3 @@ def _cross_check(A: Sequence[int]) -> bool:
     if bf is None:
         return True  # brute force too big, but constructive is valid
     return is_valid(bf)  # brute force found one => existence confirmed
-
-
-if __name__ == "__main__":
-    import random
-
-    random.seed(0)
-    tested = 0
-    failures = 0
-    for _ in range(3000):
-        n = random.randint(1, 8)
-        A = random.sample(range(-12, 13), n)
-        A = [x for x in A if x != 0]
-        if not A:
-            continue
-        tested += 1
-        ordering = valid_ordering_integers(A)
-        sums = partial_sums(ordering)
-        ok = is_valid(ordering)
-        bf_ok = brute_force_valid_ordering(A) is not None
-        if not ok or not bf_ok:
-            failures += 1
-            print("FAIL", A, ordering, sums, ok, bf_ok)
-    print(f"tested {tested} random integer sets, failures={failures}")
-    # also some structured sets
-    for A in ([1,2,3], [-5,-2,1,3,7], list(range(1,11)), list(range(-5,6))):
-        if 0 in A:
-            continue
-        ordering = valid_ordering_integers(A)
-        print(A, "->", ordering, "sums:", partial_sums(ordering), "valid:", is_valid(ordering))

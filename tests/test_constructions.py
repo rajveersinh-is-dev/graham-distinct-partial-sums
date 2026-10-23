@@ -66,7 +66,7 @@ def construct_C4(P: List[int], N: List[int]) -> List[int]:
 CONSTRUCTORS = {"C1": construct_C, "C2": construct_C2, "C3": construct_C3, "C4": construct_C4}
 
 
-def test_constructor(name, p, max_subset=5):
+def run_constructor(name, p, max_subset=5):
     elems = list(range(1, p))
     total = 0
     cond_holds = 0
@@ -88,11 +88,11 @@ def test_constructor(name, p, max_subset=5):
     return total, cond_holds, works, fails
 
 
-if __name__ == "__main__":
+def test_constructions():
     for name in CONSTRUCTORS:
         print(f"=== {name} ===")
         for p in [7, 11, 13, 17, 19]:
-            total, cond_holds, works, fails = test_constructor(name, p, max_subset=6)
+            total, cond_holds, works, fails = run_constructor(name, p, max_subset=6)
             print(f"  p={p}: subsets={total}, cond_holds={cond_holds}, works={works}, fails={len(fails)}")
             if fails:
                 print("    first fail:", fails[0])
