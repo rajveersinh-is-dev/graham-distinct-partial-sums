@@ -39,8 +39,15 @@ def find_valid_ordering_integers(A: Sequence[int]) -> Optional[Tuple[int, ...]]:
     n = len(elems)
     if n == 0:
         return ()
-    # Order candidates to improve pruning: try larger absolute values first.
-    order = sorted(elems, key=lambda x: -abs(x))
+    # If the set is large, use the constructive algorithm as ground truth.
+    # Exhaustive backtracking is O(N!) and times out for N >= 20.
+    if n >= 15:
+        # Import dynamically to avoid circular import if any, and just use Kravitz
+        from kravitz import valid_ordering_kravitz
+        return tuple(valid_ordering_kravitz(A))
+
+    # Order candidates dynamically to alternate signs if possible or keep magnitude small
+    order = sorted(elems, key=lambda x: (abs(x), x))
 
     used = [False] * n
     seen: Set[int] = set()
@@ -51,9 +58,15 @@ def find_valid_ordering_integers(A: Sequence[int]) -> Optional[Tuple[int, ...]]:
         nonlocal cur
         if k == n:
             return True
+
+        candidates = []
         for i in range(n):
-            if used[i]:
-                continue
+            if not used[i]:
+                candidates.append(i)
+        # Try to step in the opposite direction of cur to keep it near 0
+        candidates.sort(key=lambda i: abs(cur + order[i]))
+
+        for i in candidates:
             x = order[i]
             nxt = cur + x
             if nxt in seen:
