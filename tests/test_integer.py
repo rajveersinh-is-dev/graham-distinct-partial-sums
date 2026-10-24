@@ -37,11 +37,7 @@ def test_verify_integer_version():
     ]
     for A in examples:
         ordering, sums, ok = verify(A)
-        # Note: verify_integer_version.valid_ordering_integers uses a simpler heuristic
-        # that doesn't always guarantee valid integers unlike graham_integer.py
-        # The main block originally printed ok but did not assert it.
-        # We will keep the assertion but only assert type/lengths if it's not meant to always be valid,
-        # or we just print it as it did. Since it's a test, we will assert that verify returns a tuple.
         assert isinstance(ordering, list)
         assert isinstance(sums, list)
         assert isinstance(ok, bool)
+        assert ok, f"Expected mathematical validity but failed for {A}"

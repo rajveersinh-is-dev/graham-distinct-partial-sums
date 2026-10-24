@@ -16,24 +16,7 @@
 from __future__ import annotations
 
 from typing import Iterable, List, Tuple
-
-
-def valid_ordering_integers(A: Iterable[int]) -> List[int]:
-    """Return a valid ordering of a finite set of nonzero integers.
-
-    All elements must be nonzero and distinct (A is a set).
-    The returned ordering has pairwise-distinct partial sums.
-    """
-    elems = list(A)
-    if any(x == 0 for x in elems):
-        raise ValueError("A must not contain 0")
-    if len(elems) != len(set(elems)):
-        raise ValueError("A must be a set (no duplicates)")
-    P = sorted((x for x in elems if x > 0), reverse=True)  # decreasing
-    N = sorted((-x for x in elems if x < 0))              # increasing magnitudes
-    # Output: positives smallest-first (reverse of P), then negatives -n_1,...,-n_|N|
-    ordering: List[int] = list(reversed(P)) + [-n for n in N]
-    return ordering
+from kravitz import valid_ordering_kravitz as valid_ordering_integers
 
 
 def partial_sums(ordering: Iterable[int]) -> List[int]:
