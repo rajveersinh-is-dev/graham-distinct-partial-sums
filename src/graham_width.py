@@ -25,48 +25,41 @@ def build_orderings(P: List[int], N: List[int]) -> Tuple[List[int], List[int]]:
     PrefixSums(P_order) ∩ PrefixSums(N_order) = {0}.  Requires sum(P) != sum(N)."""
     sP, sN = sum(P), sum(N)
     assert sP != sN, "need unequal totals"
-    # Base: one side empty.
-    if not P:
-        return [], list(N)
-    if not N:
-        return list(P), []
 
-    if sP > sN:
-        # P is the strictly larger side.  If P=[p] then p=sP>sN>=every N-prefix,
-        # so p is not an N-prefix and the invariant holds trivially.
-        if len(P) == 1:
-            return list(P), list(N)
-        # Remove p* from P with sum(P\\{p*}) != sN, i.e. p* != sP - sN.
-        forbidden = sP - sN
-        pstar = None
-        for x in P:
-            if x != forbidden:
-                pstar = x
+    P_rem = list(P)
+    N_rem = list(N)
+    P_rev = []
+    N_rev = []
+
+    while P_rem and N_rem:
+        if sP > sN:
+            if len(P_rem) == 1:
                 break
-        assert pstar is not None, "|P|>=2 guarantees a choice != forbidden"
-        Pprime = [x for x in P if x != pstar]
-        # sum(Pprime) = sP - pstar != sN by choice, so recursion precondition holds.
-        Pord, Nord = build_orderings(Pprime, N)
-        # Invariant: sP > sN >= every N-prefix, so sP not an N-prefix.
-        return Pord + [pstar], Nord
-    else:
-        # N is the strictly larger side.  If N=[s] then s=sN>sP>=every P-prefix,
-        # so s is not a P-prefix and the invariant holds trivially.
-        if len(N) == 1:
-            return list(P), list(N)
-        # Remove n* from N with sum(N\\{n*}) != sP, i.e. n* != sN - sP.
-        forbidden = sN - sP
-        nstar = None
-        for x in N:
-            if x != forbidden:
-                nstar = x
+            forbidden = sP - sN
+            pstar = None
+            for i in range(len(P_rem)):
+                if P_rem[i] != forbidden:
+                    pstar = P_rem.pop(i)
+                    break
+            assert pstar is not None, "|P|>=2 guarantees a choice != forbidden"
+            P_rev.append(pstar)
+            sP -= pstar
+        else:
+            if len(N_rem) == 1:
                 break
-        assert nstar is not None, "|N|>=2 guarantees a choice != forbidden"
-        Nprime = [x for x in N if x != nstar]
-        # sum(Nprime) = sN - nstar != sP by choice, so recursion precondition holds.
-        Pord, Nord = build_orderings(P, Nprime)
-        # Invariant: sN > sP >= every P-prefix, so sN not a P-prefix.
-        return Pord, Nord + [nstar]
+            forbidden = sN - sP
+            nstar = None
+            for i in range(len(N_rem)):
+                if N_rem[i] != forbidden:
+                    nstar = N_rem.pop(i)
+                    break
+            assert nstar is not None, "|N|>=2 guarantees a choice != forbidden"
+            N_rev.append(nstar)
+            sN -= nstar
+
+    P_rev.reverse()
+    N_rev.reverse()
+    return P_rem + P_rev, N_rem + N_rev
 
 
 def valid_ordering_width(A: Sequence[int], p: int) -> List[int]:
