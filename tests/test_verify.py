@@ -6,6 +6,21 @@ from itertools import combinations
 from graham_verify import find_valid_ordering_integers, brute_force_mod_p, width_condition_holds
 
 
+try:
+    from hypothesis import given, settings, strategies as st
+except ImportError:
+    st = None
+
+
+if st is not None:
+    @settings(max_examples=100, deadline=None)
+    @given(st.sampled_from([5, 7, 11, 13, 17, 19, 23]), st.data())
+    def test_brute_force_mod_p_hypothesis(p, data):
+        elems = list(range(1, p))
+        subset = data.draw(st.lists(st.sampled_from(elems), min_size=1, max_size=12, unique=True))
+        assert brute_force_mod_p(subset, p) is not None
+
+
 def test_integer_version_random():
     random.seed(1)
     tested = 0
