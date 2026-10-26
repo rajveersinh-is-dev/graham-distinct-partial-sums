@@ -17,7 +17,7 @@ if st is not None:
     @given(st.sampled_from([5, 7, 11, 13, 17, 19, 23]), st.data())
     def test_brute_force_mod_p_hypothesis(p, data):
         elems = list(range(1, p))
-        subset = data.draw(st.lists(st.sampled_from(elems), min_size=1, max_size=12, unique=True))
+        subset = data.draw(st.lists(st.sampled_from(elems), min_size=1, max_size=14, unique=True))
         assert brute_force_mod_p(subset, p) is not None
 
 

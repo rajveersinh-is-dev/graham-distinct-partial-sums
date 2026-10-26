@@ -49,19 +49,18 @@ def find_valid_ordering_integers(A: Sequence[int]) -> Optional[Tuple[int, ...]]:
     # Order candidates dynamically to alternate signs if possible or keep magnitude small
     order = sorted(elems, key=lambda x: (abs(x), x))
 
-    used = [False] * n
+    used_mask = 0
     seen: Set[int] = set()
-    cur = 0
-    result: List[int] = []
+    result = [0] * n
 
-    def bt(k: int) -> bool:
-        nonlocal cur
+    def bt(k: int, cur: int) -> bool:
+        nonlocal used_mask
         if k == n:
             return True
 
         candidates = []
         for i in range(n):
-            if not used[i]:
+            if not (used_mask & (1 << i)):
                 candidates.append(i)
         # Try to step in the opposite direction of cur to keep it near 0
         candidates.sort(key=lambda i: abs(cur + order[i]))
@@ -71,19 +70,19 @@ def find_valid_ordering_integers(A: Sequence[int]) -> Optional[Tuple[int, ...]]:
             nxt = cur + x
             if nxt in seen:
                 continue
-            used[i] = True
+
+            used_mask |= (1 << i)
             seen.add(nxt)
-            cur = nxt
-            result.append(x)
-            if bt(k + 1):
+            result[k] = x
+
+            if bt(k + 1, nxt):
                 return True
-            result.pop()
-            cur = nxt - x
-            seen.discard(nxt)
-            used[i] = False
+
+            seen.remove(nxt)
+            used_mask &= ~(1 << i)
         return False
 
-    if bt(0):
+    if bt(0, 0):
         return tuple(result)
     return None
 
@@ -124,39 +123,40 @@ def brute_force_mod_p(A: Sequence[int], p: int) -> Optional[Tuple[int, ...]]:
     n = len(elems)
     if n == 0:
         return ()
-    if n > 14:  # Can handle slightly larger sets with backtracking
+    if n > 15:  # Can handle slightly larger sets with backtracking due to optimizations
         return None
 
-    used = [False] * n
-    seen: Set[int] = set()
-    result: List[int] = []
-    cur = 0
+    total_sum = sum(elems) % p
+    used_mask = 0
+    seen = set()
+    result = [0] * n
 
-    def bt(k: int) -> bool:
-        nonlocal cur
+    def bt(k: int, cur: int) -> bool:
+        nonlocal used_mask
         if k == n:
             return True
         for i in range(n):
-            if used[i]: continue
+            if (used_mask & (1 << i)): continue
             x = elems[i]
             nxt = (cur + x) % p
             if nxt in seen: continue
 
-            used[i] = True
-            seen.add(nxt)
-            cur = nxt
-            result.append(x)
+            # Pruning: The final sum (k=n-1) will exactly be total_sum.
+            # Since all partial sums must be distinct, no earlier partial sum can equal total_sum.
+            if k < n - 1 and nxt == total_sum: continue
 
-            if bt(k + 1):
+            used_mask |= (1 << i)
+            seen.add(nxt)
+            result[k] = x
+
+            if bt(k + 1, nxt):
                 return True
 
-            result.pop()
-            cur = (nxt - x) % p
-            seen.discard(nxt)
-            used[i] = False
+            seen.remove(nxt)
+            used_mask &= ~(1 << i)
         return False
 
-    if bt(0):
+    if bt(0, 0):
         return tuple(result)
     return None
 
