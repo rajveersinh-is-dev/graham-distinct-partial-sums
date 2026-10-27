@@ -20,36 +20,39 @@ from typing import List, Optional, Sequence, Tuple
 
 def kravitz_order_pair(P: List[int], N: List[int]) -> Tuple[List[int], List[int]]:
     """Inductive construction.  P, N: positive integers, distinct within each list."""
-    sP, sN = sum(P), sum(N)
-    if not P:
-        return [], list(N)
-    if not N:
-        return list(P), []
+    P_rem = list(P)
+    N_rem = list(N)
+    P_rev = []
+    N_rev = []
+    sP, sN = sum(P_rem), sum(N_rem)
 
-    if sP >= sN:
-        if len(P) == 1:
-            return list(P), list(N)
-        pstar = None
-        for x in P:
-            if sP - x != sN:
-                pstar = x
+    while P_rem and N_rem:
+        if sP >= sN:
+            if len(P_rem) == 1:
                 break
-        assert pstar is not None, "need sum(P\\{p*}) != sum(N); |P|>=2 guarantees"
-        Pprime = [x for x in P if x != pstar]
-        Pord, Nord = kravitz_order_pair(Pprime, N)
-        return Pord + [pstar], Nord
-    else:
-        if len(N) == 1:
-            return list(P), list(N)
-        nstar = None
-        for x in N:
-            if sN - x != sP:
-                nstar = x
+            pstar = None
+            for i in range(len(P_rem)):
+                if sP - P_rem[i] != sN:
+                    pstar = P_rem.pop(i)
+                    break
+            assert pstar is not None, "need sum(P\\{p*}) != sum(N); |P|>=2 guarantees"
+            P_rev.append(pstar)
+            sP -= pstar
+        else:
+            if len(N_rem) == 1:
                 break
-        assert nstar is not None, "need sum(N\\{n*}) != sum(P); |N|>=2 guarantees"
-        Nprime = [x for x in N if x != nstar]
-        Pord, Nord = kravitz_order_pair(P, Nprime)
-        return Pord, Nord + [nstar]
+            nstar = None
+            for i in range(len(N_rem)):
+                if sN - N_rem[i] != sP:
+                    nstar = N_rem.pop(i)
+                    break
+            assert nstar is not None, "need sum(N\\{n*}) != sum(P); |N|>=2 guarantees"
+            N_rev.append(nstar)
+            sN -= nstar
+
+    P_rev.reverse()
+    N_rev.reverse()
+    return P_rem + P_rev, N_rem + N_rev
 
 
 def valid_ordering_kravitz(A: Sequence[int]) -> List[int]:
