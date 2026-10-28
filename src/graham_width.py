@@ -37,10 +37,15 @@ def build_orderings(P: List[int], N: List[int]) -> Tuple[List[int], List[int]]:
                 break
             forbidden = sP - sN
             pstar = None
-            for i in range(len(P_rem)):
-                if P_rem[i] != forbidden:
-                    pstar = P_rem.pop(i)
-                    break
+            if P_rem[-1] != forbidden:
+                pstar = P_rem.pop()
+            elif P_rem[-2] != forbidden:
+                pstar = P_rem.pop(-2)
+            else:
+                for i in range(len(P_rem) - 3, -1, -1):
+                    if P_rem[i] != forbidden:
+                        pstar = P_rem.pop(i)
+                        break
             assert pstar is not None, "|P|>=2 guarantees a choice != forbidden"
             P_rev.append(pstar)
             sP -= pstar
@@ -49,10 +54,15 @@ def build_orderings(P: List[int], N: List[int]) -> Tuple[List[int], List[int]]:
                 break
             forbidden = sN - sP
             nstar = None
-            for i in range(len(N_rem)):
-                if N_rem[i] != forbidden:
-                    nstar = N_rem.pop(i)
-                    break
+            if N_rem[-1] != forbidden:
+                nstar = N_rem.pop()
+            elif N_rem[-2] != forbidden:
+                nstar = N_rem.pop(-2)
+            else:
+                for i in range(len(N_rem) - 3, -1, -1):
+                    if N_rem[i] != forbidden:
+                        nstar = N_rem.pop(i)
+                        break
             assert nstar is not None, "|N|>=2 guarantees a choice != forbidden"
             N_rev.append(nstar)
             sN -= nstar
