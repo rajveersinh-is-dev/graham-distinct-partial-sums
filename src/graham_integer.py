@@ -41,10 +41,15 @@ def order_pair(P: List[int], N: List[int]) -> Tuple[List[int], List[int]]:
             if len(P_rem) == 1:
                 break
             pstar = None
-            for i in range(len(P_rem)):
-                if sP - P_rem[i] != sN:
-                    pstar = P_rem.pop(i)
-                    break
+            if sP - P_rem[-1] != sN:
+                pstar = P_rem.pop()
+            elif sP - P_rem[-2] != sN:
+                pstar = P_rem.pop(-2)
+            else:
+                for i in range(len(P_rem) - 3, -1, -1):
+                    if sP - P_rem[i] != sN:
+                        pstar = P_rem.pop(i)
+                        break
             assert pstar is not None, "need sum(P\\{p*}) != sum(N); |P|>=2 guarantees"
             P_rev.append(pstar)
             sP -= pstar
@@ -52,10 +57,15 @@ def order_pair(P: List[int], N: List[int]) -> Tuple[List[int], List[int]]:
             if len(N_rem) == 1:
                 break
             nstar = None
-            for i in range(len(N_rem)):
-                if sN - N_rem[i] != sP:
-                    nstar = N_rem.pop(i)
-                    break
+            if sN - N_rem[-1] != sP:
+                nstar = N_rem.pop()
+            elif sN - N_rem[-2] != sP:
+                nstar = N_rem.pop(-2)
+            else:
+                for i in range(len(N_rem) - 3, -1, -1):
+                    if sN - N_rem[i] != sP:
+                        nstar = N_rem.pop(i)
+                        break
             assert nstar is not None, "need sum(N\\{n*}) != sum(P); |N|>=2 guarantees"
             N_rev.append(nstar)
             sN -= nstar
