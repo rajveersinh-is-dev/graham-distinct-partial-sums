@@ -48,6 +48,7 @@ def find_valid_ordering_integers(A: Sequence[int]) -> Optional[Tuple[int, ...]]:
 
     # Order candidates dynamically to alternate signs if possible or keep magnitude small
     order = sorted(elems, key=lambda x: (abs(x), x))
+    total_sum = sum(elems)
 
     used_mask = 0
     seen: Set[int] = set()
@@ -69,6 +70,9 @@ def find_valid_ordering_integers(A: Sequence[int]) -> Optional[Tuple[int, ...]]:
             x = order[i]
             nxt = cur + x
             if nxt in seen:
+                continue
+
+            if k < n - 1 and nxt == total_sum:
                 continue
 
             used_mask |= (1 << i)
