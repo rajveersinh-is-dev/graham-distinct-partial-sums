@@ -130,6 +130,32 @@ def test_width_construction_random_integers():
         assert is_valid_integers(ordering), f"Not valid integers: {A}"
         assert range_width(ordering) < p, f"Range width >= p: {A}"
 
+try:
+    from hypothesis import given, settings, strategies as st
+except ImportError:
+    st = None
+
+if st is not None:
+    @settings(max_examples=500, deadline=None)
+    @given(st.sampled_from([5, 7, 11, 13, 17, 19, 23]), st.data())
+    def test_width_hypothesis_fuzz(p, data):
+        elems = list(range(1, p))
+        # Draw a subset of elements up to a reasonable size
+        subset = data.draw(st.lists(st.sampled_from(elems), min_size=1, max_size=min(p - 1, 15), unique=True))
+
+        reps = [centered_rep(a, p) for a in subset]
+        P = [x for x in reps if x > 0]
+        N = [-x for x in reps if x < 0]
+
+        # Condition we're testing
+        if sum(P) < p and sum(N) < p:
+            ordering = valid_ordering_width(subset, p)
+            assert is_valid_mod_p(ordering, p), f"Failed for {subset} p={p}"
+            # Specific edge case check from priorities: sum(P) == sum(N)
+            if sum(P) == sum(N):
+                # The theorem/implementation handles this specific case
+                assert len(ordering) == len(subset)
+
 def test_width_condition_cross_check_brute_force():
     # Cross-check width condition vs brute force
     for p in [7, 11, 13]:

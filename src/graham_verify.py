@@ -25,6 +25,7 @@ from functools import lru_cache
 from itertools import combinations
 from typing import List, Optional, Sequence, Set, Tuple
 
+from graham_backtrack import backtrack_valid_ordering
 
 # ---------------------------------------------------------------- Part A: integers
 
@@ -46,49 +47,7 @@ def find_valid_ordering_integers(A: Sequence[int]) -> Optional[Tuple[int, ...]]:
         from kravitz import valid_ordering_kravitz
         return tuple(valid_ordering_kravitz(A))
 
-    # Order candidates dynamically to alternate signs if possible or keep magnitude small
-    order = sorted(elems, key=lambda x: (abs(x), x))
-    total_sum = sum(elems)
-
-    used_mask = 0
-    seen: Set[int] = set()
-    result = [0] * n
-
-    def bt(k: int, cur: int) -> bool:
-        nonlocal used_mask
-        if k == n:
-            return True
-
-        candidates = []
-        for i in range(n):
-            if not (used_mask & (1 << i)):
-                candidates.append(i)
-        # Try to step in the opposite direction of cur to keep it near 0
-        candidates.sort(key=lambda i: abs(cur + order[i]))
-
-        for i in candidates:
-            x = order[i]
-            nxt = cur + x
-            if nxt in seen:
-                continue
-
-            if k < n - 1 and nxt == total_sum:
-                continue
-
-            used_mask |= (1 << i)
-            seen.add(nxt)
-            result[k] = x
-
-            if bt(k + 1, nxt):
-                return True
-
-            seen.remove(nxt)
-            used_mask &= ~(1 << i)
-        return False
-
-    if bt(0, 0):
-        return tuple(result)
-    return None
+    return backtrack_valid_ordering(elems, dynamic_sort=True)
 
 
 # ---------------------------------------------------------------- Part B: mod p
@@ -130,38 +89,6 @@ def brute_force_mod_p(A: Sequence[int], p: int) -> Optional[Tuple[int, ...]]:
     if n > 15:  # Can handle slightly larger sets with backtracking due to optimizations
         return None
 
-    total_sum = sum(elems) % p
-    used_mask = 0
-    seen = set()
-    result = [0] * n
-
-    def bt(k: int, cur: int) -> bool:
-        nonlocal used_mask
-        if k == n:
-            return True
-        for i in range(n):
-            if (used_mask & (1 << i)): continue
-            x = elems[i]
-            nxt = (cur + x) % p
-            if nxt in seen: continue
-
-            # Pruning: The final sum (k=n-1) will exactly be total_sum.
-            # Since all partial sums must be distinct, no earlier partial sum can equal total_sum.
-            if k < n - 1 and nxt == total_sum: continue
-
-            used_mask |= (1 << i)
-            seen.add(nxt)
-            result[k] = x
-
-            if bt(k + 1, nxt):
-                return True
-
-            seen.remove(nxt)
-            used_mask &= ~(1 << i)
-        return False
-
-    if bt(0, 0):
-        return tuple(result)
-    return None
+    return backtrack_valid_ordering(elems, is_mod_p=True, p=p, dynamic_sort=False)
 
 
