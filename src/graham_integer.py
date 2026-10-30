@@ -19,6 +19,8 @@ from functools import lru_cache
 from itertools import permutations
 from typing import List, Optional, Sequence, Tuple
 
+from graham_backtrack import backtrack_valid_ordering
+
 
 # ----------------------------------------------------------- induction step
 
@@ -106,37 +108,7 @@ def brute_force_valid_ordering(A: Sequence[int]) -> Optional[Tuple[int, ...]]:
     n = len(elems)
     if n > 9:
         return None  # too expensive
-    total_sum = sum(elems)
-    used_mask = 0
-    seen = set()
-    result = [0] * n
-
-    def bt(k, cur):
-        nonlocal used_mask
-        if k == n:
-            return True
-        for i in range(n):
-            if (used_mask & (1 << i)): continue
-            x = elems[i]
-            nxt = cur + x
-            if nxt in seen: continue
-
-            if k < n - 1 and nxt == total_sum: continue
-
-            used_mask |= (1 << i)
-            seen.add(nxt)
-            result[k] = x
-
-            if bt(k + 1, nxt):
-                return True
-
-            seen.remove(nxt)
-            used_mask &= ~(1 << i)
-        return False
-
-    if bt(0, 0):
-        return tuple(result)
-    return None
+    return backtrack_valid_ordering(elems, dynamic_sort=False)
 
 
 def _cross_check(A: Sequence[int]) -> bool:
