@@ -18,13 +18,6 @@ from itertools import combinations
 from typing import List, Optional, Sequence, Tuple
 
 
-def centered_rep(a: int, p: int) -> int:
-    r = a % p
-    if r > p // 2:
-        r -= p
-    return r
-
-
 def partial_sums(ordering: Sequence[int]) -> List[int]:
     out, s = [], 0
     for x in ordering:
@@ -72,10 +65,11 @@ def run_constructor(name, p, max_subset=5):
     cond_holds = 0
     works = 0
     fails: List[Tuple] = []
+    half_p = p // 2
     for r in range(1, min(max_subset, p - 1) + 1):
         for subset in combinations(elems, r):
             total += 1
-            reps = [centered_rep(a, p) for a in subset]
+            reps = [(a % p) - p if (a % p) > half_p else (a % p) for a in subset]
             P = [x for x in reps if x > 0]
             N = [-x for x in reps if x < 0]
             if sum(P) < p and sum(N) < p:

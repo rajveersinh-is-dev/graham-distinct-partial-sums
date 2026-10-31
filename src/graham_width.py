@@ -3,13 +3,13 @@ Correct constructive proof of the WIDTH SUFFICIENT CONDITION (PROVED HERE).
 
 Theorem. Let p be prime and A subset F_p\\{0}. Lift to centered reps A' in
 (-(p-1)/2,(p-1)/2). Let P={a' in A': a'>0}, N={-a' : a' in A', a'<0}.
-If sum(P) < p, sum(N) < p, and sum(P) != sum(N), then A is sequenceable mod p.
+If sum(P) < p and sum(N) < p, then A is sequenceable mod p.
 
 Proof. Build orderings of P and N whose prefix sums avoid each other (except 0)
 by always removing an element from the side with strictly larger total.  This
 maintains the invariant PrefixSums(P_order) ∩ PrefixSums(N_order) = {0}.
 Outputting reverse(P_order) followed by -N_order gives distinct integer partial
-sums lying in an interval of width < p (since sumP,p and sumN<p and sumP!=sumN),
+sums lying in an interval of width < p (since sumP<p and sumN<p),
 hence they are distinct mod p.
 """
 
