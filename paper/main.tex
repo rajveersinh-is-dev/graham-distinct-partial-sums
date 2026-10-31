@@ -30,7 +30,7 @@ $|A|\le \lceil \log p/\log\log p\rceil$ via rectification.
 We prove a new, complementary sufficient condition. Lift $A$ to centered
 representatives in $(-(p-1)/2,(p-1)/2)$, and let $P$ and $N$ be the positive
 representatives and the magnitudes of the negative ones. If
-$\sum P < p$, $\sum N < p$, and $\sum P\ne\sum N$, then $A$ is sequenceable
+$\sum P < p$ and $\sum N < p$, then $A$ is sequenceable
 modulo $p$. This covers sets of size up to about $\sqrt{2p}$ (for instance
 $A=\{1,\dots,k\}$ with $k(k+1)/2<p$), well beyond the rectification range.
 
@@ -43,8 +43,7 @@ $<p$, hence are distinct modulo $p$.
 All claims are accompanied by explicit evidence categories; the theorem and
 its proof are given unconditionally, and the construction is verified
 computationally on all small cases and thousands of random instances. The
-general conjecture remains open; the uncovered subcase $\sum P=\sum N$ is
-identified as the smallest remaining gap.
+general conjecture remains open.
 \end{abstract}
 
 \section{Introduction}
@@ -90,7 +89,7 @@ $a\in A$, and put
 \]
 If
 \[
-  \sum P < p,\qquad \sum N < p,\qquad \sum P\ne\sum N,
+  \sum P < p,\qquad \sum N < p,
 \]
 then $A$ is sequenceable modulo $p$.
 \end{theorem}
@@ -145,6 +144,8 @@ prefix-sum of $N$. The case $\sum N>\sum P$ is symmetric.
 \section{Proof of the main theorem}
 
 \begin{proof}[Proof of Theorem \ref{thm:main}]
+\textbf{Case 1:} $\sum P \ne \sum N$.
+
 By Lemma 1 choose orderings of $P$ and $N$ whose nonempty prefix-sums are
 disjoint. Output the ordering of $A'$
 \[
@@ -176,21 +177,51 @@ $[\sum P-\sum N,\sum P)$. Thus all partial sums lie in an interval of width
 If $\sum P>\sum N$, then $\sum P-\sum N\ge1$, so $W=\sum P-1<p-1<p$.
 If $\sum N>\sum P$, then $W=\sum N<p$. In either case $W<p$.
 
-\textbf{Modulo $p$.} The $S_k$ are distinct integers in an interval of width
-$W<p$. If $S_i\equiv S_j\pmod p$ for $i\ne j$, then $p\mid(S_i-S_j)$, so
-$|S_i-S_j|\ge p$, contradicting $|S_i-S_j|\le W<p$. Hence the partial sums
-are pairwise distinct modulo $p$.
+\textbf{Case 2:} $\sum P = \sum N$.
+
+Since $A$ is a subset of nonzeros, if $P$ is empty then $N$ must be empty,
+so $A$ is empty and sequenceable. Assume $P$ is nonempty. Choose any
+$p^* \in P$ and let $P' = P \setminus \{p^*\}$. Then
+$\sum P' = \sum P - p^* < \sum P = \sum N$. Since $P'$ and $N$ have unequal
+sums, we can apply Lemma 1 to get orderings $P'\text{-ordering}$ and
+$N\text{-ordering}$ whose nonempty prefix sums are disjoint.
+
+Let the $P\text{-ordering}$ be the $P'\text{-ordering}$ followed by $p^*$.
+The prefix sums of the $P\text{-ordering}$ are exactly those of the
+$P'\text{-ordering}$, plus the full sum $\sum P$. Output the ordering
+of $A'$
+\[
+  \operatorname{reverse}(P\text{-ordering})\quad\text{followed by}\quad
+  (-n\ \text{for }n\in N\text{-ordering}).
+\]
+Let $S_1,\dots,S_n$ be the integer partial sums.
+
+\textbf{Distinctness as integers.} Just as in Case 1, the positive and
+negative phases are internally strictly monotone. A cross-phase collision
+occurs iff $\sum P - q = \sum P - n$, iff $q=n$, where $q$ is a proper
+prefix-sum of the $P\text{-ordering}$, and $n$ is a nonempty prefix-sum of
+the $N\text{-ordering}$. Since $q$ must be a proper prefix sum of the
+$P\text{-ordering}$, it is one of the prefix sums of the
+$P'\text{-ordering}$. But by Lemma 1, no prefix sum of the
+$P'\text{-ordering}$ equals a prefix sum of the $N\text{-ordering}$. Thus
+$q=n$ is impossible, and there are no cross-phase collisions.
+
+\textbf{Range bound.} The positive phase partial sums lie in $(0, \sum P]$.
+The negative phase starts at $\sum P - \text{first element of } N\text{-ordering}$
+and ends at $\sum P - \sum N = 0$. So all partial sums lie in $[0, \sum P]$.
+The width is $W = \sum P < p$.
+
+\textbf{Modulo $p$.} In both cases, the $S_k$ are distinct integers in an
+interval of width $W<p$. If $S_i\equiv S_j\pmod p$ for $i\ne j$, then
+$p\mid(S_i-S_j)$, so $|S_i-S_j|\ge p$, contradicting $|S_i-S_j|\le W<p$.
+Hence the partial sums are pairwise distinct modulo $p$.
 \end{proof}
 
 \section{Limitations and remaining questions}
 
-The hypothesis $\sum P\ne\sum N$ is technical: the case $\sum P=\sum N$
-(i.e. the centered representatives sum to $0$) is not covered by this proof.
-It is sequenceable in every small case checked, but a general proof of that
-subcase remains a small open gap. More generally, Graham's conjecture for
-arbitrary $|A|$ (in particular sets whose centered representatives have large
-absolute sum) remains open. A natural strengthening is the question of
-two-sided valid orderings raised in \cite{kravitz2024}.
+Graham's conjecture for arbitrary $|A|$ (in particular sets whose centered
+representatives have large absolute sum) remains open. A natural strengthening
+is the question of two-sided valid orderings raised in \cite{kravitz2024}.
 
 \section{Evidence categories}
 

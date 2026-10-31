@@ -15,11 +15,6 @@ from graham_width import (
 from itertools import combinations
 
 
-def centered_rep(a, p):
-    r = a % p
-    return r - p if r > p // 2 else r
-
-
 def test_build_orderings_invariant():
     """Lemma 1: prefix sums of P_order and N_order share only 0."""
     import random
@@ -48,10 +43,11 @@ def test_width_construction_modp_exhaustive():
     """Exhaustive: every width-satisfying subset for small p is sequenceable mod p via construction."""
     for p in [5, 7, 11, 13, 17, 19]:
         elems = list(range(1, p))
+        half_p = p // 2
         count = 0
         for r in range(1, min(7, p - 1) + 1):
             for subset in combinations(elems, r):
-                reps = [centered_rep(a, p) for a in subset]
+                reps = [(a % p) - p if (a % p) > half_p else (a % p) for a in subset]
                 P = [x for x in reps if x > 0]
                 N = [-x for x in reps if x < 0]
                 if sum(P) < p and sum(N) < p:
@@ -143,7 +139,8 @@ if st is not None:
         # Draw a subset of elements up to a reasonable size
         subset = data.draw(st.lists(st.sampled_from(elems), min_size=1, max_size=min(p - 1, 15), unique=True))
 
-        reps = [centered_rep(a, p) for a in subset]
+        half_p = p // 2
+        reps = [(a % p) - p if (a % p) > half_p else (a % p) for a in subset]
         P = [x for x in reps if x > 0]
         N = [-x for x in reps if x < 0]
 

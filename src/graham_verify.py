@@ -52,15 +52,6 @@ def find_valid_ordering_integers(A: Sequence[int]) -> Optional[Tuple[int, ...]]:
 
 # ---------------------------------------------------------------- Part B: mod p
 
-def centered_rep(a: int, p: int) -> int:
-    """Least absolute residue of a mod p in (-(p-1)/2, (p-1)/2]. For p odd, in
-    {-(p-1)/2,...,(p-1)/2}."""
-    r = a % p
-    if r > p // 2:
-        r -= p
-    return r
-
-
 def is_valid_mod_p(ordering: Sequence[int], p: int) -> bool:
     seen: Set[int] = set()
     s = 0
@@ -74,7 +65,8 @@ def is_valid_mod_p(ordering: Sequence[int], p: int) -> bool:
 
 def width_condition_holds(A: Sequence[int], p: int) -> bool:
     """sum(P) < p and sum(N) < p for centered reps (sufficient for sequenceability)."""
-    reps = [centered_rep(a, p) for a in A]
+    half_p = p // 2
+    reps = [(a % p) - p if (a % p) > half_p else (a % p) for a in A]
     sumP = sum(x for x in reps if x > 0)
     sumN = sum(-x for x in reps if x < 0)
     return sumP < p and sumN < p
