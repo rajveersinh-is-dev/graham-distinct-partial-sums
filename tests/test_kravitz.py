@@ -8,8 +8,8 @@ from kravitz import valid_ordering_kravitz, is_valid_integers, partial_sums, ran
 def test_kravitz_random():
     random.seed(2)
     for _ in range(500):
-        n = random.randint(1, 10)
-        A = random.sample(range(-25, 26), n)
+        n = random.randint(1, 40)
+        A = random.sample(range(-100, 101), n)
         A = [x for x in A if x != 0]
         if not A:
             continue
