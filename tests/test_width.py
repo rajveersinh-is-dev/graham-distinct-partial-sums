@@ -133,11 +133,11 @@ except ImportError:
 
 if st is not None:
     @settings(max_examples=500, deadline=None)
-    @given(st.sampled_from([5, 7, 11, 13, 17, 19, 23]), st.data())
+    @given(st.sampled_from([5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]), st.data())
     def test_width_hypothesis_fuzz(p, data):
         elems = list(range(1, p))
         # Draw a subset of elements up to a reasonable size
-        subset = data.draw(st.lists(st.sampled_from(elems), min_size=1, max_size=min(p - 1, 15), unique=True))
+        subset = data.draw(st.lists(st.sampled_from(elems), min_size=1, max_size=min(p - 1, 40), unique=True))
 
         half_p = p // 2
         reps = [(a % p) - p if (a % p) > half_p else (a % p) for a in subset]

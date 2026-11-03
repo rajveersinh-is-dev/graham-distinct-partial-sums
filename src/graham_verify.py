@@ -41,8 +41,8 @@ def find_valid_ordering_integers(A: Sequence[int]) -> Optional[Tuple[int, ...]]:
     if n == 0:
         return ()
     # If the set is large, use the constructive algorithm as ground truth.
-    # Exhaustive backtracking is O(N!) and times out for N >= 20.
-    if n >= 15:
+    # Exhaustive backtracking is O(N!) and times out for N >= 30.
+    if n >= 25:
         # Import dynamically to avoid circular import if any, and just use Kravitz
         from kravitz import valid_ordering_kravitz
         return tuple(valid_ordering_kravitz(A))
@@ -78,7 +78,7 @@ def brute_force_mod_p(A: Sequence[int], p: int) -> Optional[Tuple[int, ...]]:
     n = len(elems)
     if n == 0:
         return ()
-    if n > 15:  # Can handle slightly larger sets with backtracking due to optimizations
+    if n > 25:  # Can handle slightly larger sets with backtracking due to optimizations
         return None
 
     return backtrack_valid_ordering(elems, is_mod_p=True, p=p, dynamic_sort=False)
