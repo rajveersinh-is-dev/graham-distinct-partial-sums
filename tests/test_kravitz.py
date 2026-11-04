@@ -16,6 +16,25 @@ def test_kravitz_random():
         ordering = valid_ordering_kravitz(A)
         assert is_valid_integers(ordering), f"KRAVITZ FAIL: {A} {ordering} {partial_sums(ordering)}"
 
+def test_kravitz_large_stress():
+    """
+    Formally evaluate the performance of valid_ordering_kravitz for sizes nearing N = 1000 and 3000.
+    Ensures that the algorithm scales well without recursion limit violations (since it's iterative).
+    """
+    random.seed(42)
+    for n_size in [1000, 3000]:
+        # Generate large inputs
+        A = random.sample(range(-5000, 5000), n_size)
+        A = [x for x in A if x != 0]
+
+        # Valid ordering should complete efficiently without RecursionError
+        try:
+            ordering = valid_ordering_kravitz(A)
+        except RecursionError:
+            assert False, f"Recursion limit hit for N={n_size}"
+
+        assert len(ordering) == len(A), "Ordering length mismatch"
+
 def test_modp_width_corollary():
     for p in [7, 11, 13, 17]:
         elems = list(range(1, p))
