@@ -7,7 +7,7 @@ arithmetic is exact integer/modular arithmetic.
 
 ### Files
 - `src/graham_width.py` — constructive proof of Theorem 1 (width sufficient condition).
-- `src/graham_verify.py` — verification of the integer version of Graham's conjecture and the mod-$p$ brute-force checks.
+- `src/graham_verify.py` — verification of the integer version of Graham's conjecture and the mod-$p$ checks via a hybrid approach (mathematical width condition, brute-force, and randomized heuristic).
 - `tests/test_width.py` — automated tests (prefix-sum invariant, exhaustive mod-$p$ checks for $p\le 23$, corollary for consecutive sets, backtracking ground truth for the integer version).
 
 ### How to reproduce
