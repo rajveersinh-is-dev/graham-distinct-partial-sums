@@ -28,7 +28,7 @@ If A={1,2,...,k}⊆F_p^× (viewed mod p) with k(k+1)/2 < p, then A is sequenceab
 
 ## Computational verification (COMPUTATIONALLY VERIFIED, finite)
 - src/graham_width.py: the construction produces distinct mod-p partial sums for every width-satisfying set for p≤23 (exhaustive), and for thousands of random sets; cross-checked against brute force with complete agreement.
-- src/graham_verify.py: Graham's conjecture holds for all subsets of size ≤5 for p=3,5,7,11,13 (brute force); integer version verified on ~4000 random sets via backtracking.
+- src/graham_verify.py: Graham's conjecture holds for all subsets of size ≤5 for p=3,5,7,11,13 (brute force); larger sets verify efficiently using a hybrid approach combining the mathematical width condition and a randomized greedy heuristic; integer version verified on ~4000 random sets via backtracking.
 
 ## Open status
 Graham's conjecture for arbitrary |A| remains OPEN. Theorem 1 is a rigorous partial result (Final verdict category: C, Rigorous Partial Result).

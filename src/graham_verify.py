@@ -27,6 +27,7 @@ import random
 from typing import List, Optional, Sequence, Set, Tuple
 
 from graham_backtrack import backtrack_valid_ordering
+from graham_width import valid_ordering_width
 
 # ---------------------------------------------------------------- Part A: integers
 
@@ -73,7 +74,7 @@ def width_condition_holds(A: Sequence[int], p: int) -> bool:
     return sumP < p and sumN < p
 
 
-def heuristic_valid_ordering_mod_p(elems: Sequence[int], p: int, max_restarts: int = 1000) -> Optional[Tuple[int, ...]]:
+def heuristic_valid_ordering_mod_p(elems: Sequence[int], p: int, max_restarts: int = 2000) -> Optional[Tuple[int, ...]]:
     """
     Randomized greedy heuristic for finding a valid ordering mod p.
     Useful for larger sets where exhaustive backtracking is too slow.
@@ -124,13 +125,18 @@ def heuristic_valid_ordering_mod_p(elems: Sequence[int], p: int, max_restarts: i
 
 def find_valid_ordering_mod_p(A: Sequence[int], p: int) -> Optional[Tuple[int, ...]]:
     """
-    Find a valid ordering mod p. Uses exhaustive search for small sets
-    and a randomized greedy heuristic for larger sets.
+    Find a valid ordering mod p. Uses a hybrid approach:
+    1. Deterministic mathematical construction if width condition holds.
+    2. Exhaustive search for small sets (N <= 25).
+    3. Randomized greedy heuristic for larger sets.
     """
     elems = tuple(sorted(set(a % p for a in A if a % p != 0)))
     n = len(elems)
     if n == 0:
         return ()
+
+    if width_condition_holds(elems, p):
+        return tuple(valid_ordering_width(elems, p))
 
     if n <= 25:
         # Exhaustive search works reasonably well for N <= 25 with optimizations
@@ -138,5 +144,3 @@ def find_valid_ordering_mod_p(A: Sequence[int], p: int) -> Optional[Tuple[int, .
     else:
         # Fall back to heuristic for larger sets
         return heuristic_valid_ordering_mod_p(elems, p)
-
-
