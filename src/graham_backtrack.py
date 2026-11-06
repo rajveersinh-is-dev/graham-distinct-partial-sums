@@ -78,3 +78,78 @@ def backtrack_valid_ordering(
     if bt(0, 0):
         return tuple(result)
     return None
+
+
+def backtrack_two_sided_valid_ordering(
+    elems: Sequence[int],
+    is_mod_p: bool = False,
+    p: int = 1
+) -> Optional[Tuple[int, ...]]:
+    """
+    Exhaustive search for a two-sided valid ordering mod p.
+    """
+    n = len(elems)
+    if n == 0:
+        return ()
+
+    total_sum = sum(elems)
+    if is_mod_p:
+        total_sum %= p
+
+    used_mask = 0
+    seen = set()
+    result = [0] * n
+
+    order = list(elems)
+
+    def is_two_sided_valid(ordering: Sequence[int]) -> bool:
+        # Check reverse direction
+        seen_rev = set()
+        s = 0
+        for x in reversed(ordering):
+            s += x
+            if is_mod_p:
+                s %= p
+            if s in seen_rev:
+                return False
+            seen_rev.add(s)
+        return True
+
+    def bt(k: int, cur: int) -> bool:
+        nonlocal used_mask
+        if k == n:
+            return is_two_sided_valid(result)
+
+        candidates = range(n)
+
+        for i in candidates:
+            if (used_mask & (1 << i)):
+                continue
+
+            x = order[i]
+            nxt = cur + x
+            if is_mod_p:
+                nxt %= p
+
+            if nxt in seen:
+                continue
+
+            # Pruning
+            if k < n - 1 and nxt == total_sum:
+                continue
+
+            used_mask |= (1 << i)
+            seen.add(nxt)
+            result[k] = x
+
+            if bt(k + 1, nxt):
+                return True
+
+            seen.remove(nxt)
+            used_mask &= ~(1 << i)
+
+        return False
+
+    if bt(0, 0):
+        return tuple(result)
+    return None
