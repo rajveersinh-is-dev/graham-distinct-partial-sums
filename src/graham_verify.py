@@ -26,10 +26,14 @@ from itertools import combinations
 import random
 from typing import List, Optional, Sequence, Set, Tuple
 
-from graham_backtrack import backtrack_valid_ordering, backtrack_two_sided_valid_ordering
+from graham_backtrack import (
+    backtrack_valid_ordering,
+    backtrack_two_sided_valid_ordering,
+)
 from graham_width import valid_ordering_width
 
 # ---------------------------------------------------------------- Part A: integers
+
 
 def find_valid_ordering_integers(A: Sequence[int]) -> Optional[Tuple[int, ...]]:
     """Backtracking search for a valid ordering (distinct integer partial sums).
@@ -47,12 +51,14 @@ def find_valid_ordering_integers(A: Sequence[int]) -> Optional[Tuple[int, ...]]:
     if n >= 25:
         # Import dynamically to avoid circular import if any, and just use Kravitz
         from kravitz import valid_ordering_kravitz
+
         return tuple(valid_ordering_kravitz(A))
 
     return backtrack_valid_ordering(elems, dynamic_sort=True)
 
 
 # ---------------------------------------------------------------- Part B: mod p
+
 
 def is_valid_mod_p(ordering: Sequence[int], p: int) -> bool:
     seen: Set[int] = set()
@@ -79,7 +85,9 @@ def width_condition_holds(A: Sequence[int], p: int) -> bool:
     return sumP < p and sumN < p
 
 
-def heuristic_two_sided_valid_ordering_mod_p(elems: Sequence[int], p: int, max_restarts: int = 2000) -> Optional[Tuple[int, ...]]:
+def heuristic_two_sided_valid_ordering_mod_p(
+    elems: Sequence[int], p: int, max_restarts: int = 2000
+) -> Optional[Tuple[int, ...]]:
     """
     Randomized greedy heuristic for finding a two-sided valid ordering mod p.
     """
@@ -99,7 +107,7 @@ def heuristic_two_sided_valid_ordering_mod_p(elems: Sequence[int], p: int, max_r
 
         for _ in range(n):
             best_i = -1
-            best_nxt = None
+            best_nxt = 0
 
             for i, x in enumerate(candidates):
                 if used[i]:
@@ -126,7 +134,10 @@ def heuristic_two_sided_valid_ordering_mod_p(elems: Sequence[int], p: int, max_r
 
     return None
 
-def heuristic_valid_ordering_mod_p(elems: Sequence[int], p: int, max_restarts: int = 2000) -> Optional[Tuple[int, ...]]:
+
+def heuristic_valid_ordering_mod_p(
+    elems: Sequence[int], p: int, max_restarts: int = 2000
+) -> Optional[Tuple[int, ...]]:
     """
     Randomized greedy heuristic for finding a valid ordering mod p.
     Useful for larger sets where exhaustive backtracking is too slow.
@@ -147,7 +158,7 @@ def heuristic_valid_ordering_mod_p(elems: Sequence[int], p: int, max_restarts: i
 
         for _ in range(n):
             best_i = -1
-            best_nxt = None
+            best_nxt = 0
 
             for i, x in enumerate(candidates):
                 if used[i]:
@@ -175,7 +186,10 @@ def heuristic_valid_ordering_mod_p(elems: Sequence[int], p: int, max_restarts: i
 
     return None
 
-def find_two_sided_valid_ordering_mod_p(A: Sequence[int], p: int) -> Optional[Tuple[int, ...]]:
+
+def find_two_sided_valid_ordering_mod_p(
+    A: Sequence[int], p: int
+) -> Optional[Tuple[int, ...]]:
     """
     Find a two-sided valid ordering mod p. Uses a hybrid approach:
     1. Exhaustive search for small sets (N <= 25).

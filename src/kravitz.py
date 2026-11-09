@@ -69,7 +69,9 @@ def valid_ordering_kravitz(A: Sequence[int]) -> List[int]:
     elems = list(A)
     assert all(x != 0 for x in elems)
     assert len(elems) == len(set(elems))
-    P = sorted((x for x in elems if x > 0), reverse=True)  # order doesn't matter; induction reorders
+    P = sorted(
+        (x for x in elems if x > 0), reverse=True
+    )  # order doesn't matter; induction reorders
     N = sorted((-x for x in elems if x < 0))
     Pord, Nord = kravitz_order_pair(list(P), list(N))
     return list(reversed(Pord)) + [-n for n in Nord]

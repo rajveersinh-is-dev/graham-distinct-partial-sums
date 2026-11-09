@@ -56,7 +56,12 @@ def construct_C4(P: List[int], N: List[int]) -> List[int]:
     return sorted(P, reverse=True) + [-n for n in sorted(N, reverse=True)]
 
 
-CONSTRUCTORS = {"C1": construct_C, "C2": construct_C2, "C3": construct_C3, "C4": construct_C4}
+CONSTRUCTORS = {
+    "C1": construct_C,
+    "C2": construct_C2,
+    "C3": construct_C3,
+    "C4": construct_C4,
+}
 
 
 def run_constructor(name, p, max_subset=5):
@@ -78,7 +83,16 @@ def run_constructor(name, p, max_subset=5):
                 if is_valid_integers(ordering) and range_width(ordering) < p:
                     works += 1
                 else:
-                    fails.append((subset, P, N, ordering, partial_sums(ordering), range_width(ordering)))
+                    fails.append(
+                        (
+                            subset,
+                            P,
+                            N,
+                            ordering,
+                            partial_sums(ordering),
+                            range_width(ordering),
+                        )
+                    )
     return total, cond_holds, works, fails
 
 
@@ -87,7 +101,9 @@ def test_constructions():
         print(f"=== {name} ===")
         for p in [7, 11, 13, 17, 19]:
             total, cond_holds, works, fails = run_constructor(name, p, max_subset=6)
-            print(f"  p={p}: subsets={total}, cond_holds={cond_holds}, works={works}, fails={len(fails)}")
+            print(
+                f"  p={p}: subsets={total}, cond_holds={cond_holds}, works={works}, fails={len(fails)}"
+            )
             if fails:
                 print("    first fail:", fails[0])
         print()

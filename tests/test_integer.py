@@ -1,8 +1,14 @@
 import sys
+
 sys.path.insert(0, "src")
 
 import random
-from graham_integer import valid_ordering_integers, partial_sums, is_valid, brute_force_valid_ordering
+from graham_integer import (
+    valid_ordering_integers,
+    partial_sums,
+    is_valid,
+    brute_force_valid_ordering,
+)
 
 
 def test_graham_integer_random():
@@ -16,7 +22,10 @@ def test_graham_integer_random():
         ordering = valid_ordering_integers(A)
         ok = is_valid(ordering)
         bf_ok = brute_force_valid_ordering(A) is not None
-        assert ok and bf_ok, f"FAIL {A} {ordering} {partial_sums(ordering)} {ok} {bf_ok}"
+        assert (
+            ok and bf_ok
+        ), f"FAIL {A} {ordering} {partial_sums(ordering)} {ok} {bf_ok}"
+
 
 def test_graham_integer_structured():
     for A in ([1, 2, 3], [-5, -2, 1, 3, 7], list(range(1, 11)), list(range(-5, 6))):
@@ -25,7 +34,9 @@ def test_graham_integer_structured():
         ordering = valid_ordering_integers(A)
         assert is_valid(ordering), f"{A} -> {ordering} sums: {partial_sums(ordering)}"
 
+
 from verify_integer_version import verify
+
 
 def test_verify_integer_version():
     examples = [
