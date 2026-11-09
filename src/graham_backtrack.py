@@ -1,10 +1,8 @@
 from typing import Sequence, Optional, Tuple
 
+
 def backtrack_valid_ordering(
-    elems: Sequence[int],
-    is_mod_p: bool = False,
-    p: int = 1,
-    dynamic_sort: bool = False
+    elems: Sequence[int], is_mod_p: bool = False, p: int = 1, dynamic_sort: bool = False
 ) -> Optional[Tuple[int, ...]]:
     """
     Exhaustive search for a valid ordering (distinct partial sums).
@@ -45,7 +43,7 @@ def backtrack_valid_ordering(
                     candidates.append(i)
             candidates.sort(key=lambda idx: abs(cur + order[idx]))
         else:
-            candidates = range(n)
+            candidates = list(range(n))
 
         for i in candidates:
             if not dynamic_sort and (used_mask & (1 << i)):
@@ -63,7 +61,7 @@ def backtrack_valid_ordering(
             if k < n - 1 and nxt == total_sum:
                 continue
 
-            used_mask |= (1 << i)
+            used_mask |= 1 << i
             seen.add(nxt)
             result[k] = x
 
@@ -81,9 +79,7 @@ def backtrack_valid_ordering(
 
 
 def backtrack_two_sided_valid_ordering(
-    elems: Sequence[int],
-    is_mod_p: bool = False,
-    p: int = 1
+    elems: Sequence[int], is_mod_p: bool = False, p: int = 1
 ) -> Optional[Tuple[int, ...]]:
     """
     Exhaustive search for a two-sided valid ordering mod p.
@@ -120,10 +116,10 @@ def backtrack_two_sided_valid_ordering(
         if k == n:
             return is_two_sided_valid(result)
 
-        candidates = range(n)
+        candidates = list(range(n))
 
         for i in candidates:
-            if (used_mask & (1 << i)):
+            if used_mask & (1 << i):
                 continue
 
             x = order[i]
@@ -138,7 +134,7 @@ def backtrack_two_sided_valid_ordering(
             if k < n - 1 and nxt == total_sum:
                 continue
 
-            used_mask |= (1 << i)
+            used_mask |= 1 << i
             seen.add(nxt)
             result[k] = x
 

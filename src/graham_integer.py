@@ -21,8 +21,8 @@ from typing import List, Optional, Sequence, Tuple
 
 from graham_backtrack import backtrack_valid_ordering
 
-
 # ----------------------------------------------------------- induction step
+
 
 def order_pair(P: List[int], N: List[int]) -> Tuple[List[int], List[int]]:
     """Return orderings of P and N such that
@@ -101,6 +101,7 @@ def is_valid(ordering: Sequence[int]) -> bool:
 
 
 # --------------------------------------------------------------- brute force
+
 
 def brute_force_valid_ordering(A: Sequence[int]) -> Optional[Tuple[int, ...]]:
     """Search all permutations for one with distinct partial sums (small sets)."""

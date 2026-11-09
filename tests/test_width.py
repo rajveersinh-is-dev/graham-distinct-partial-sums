@@ -1,6 +1,7 @@
 # Tests for Graham width construction
 
 import sys
+
 sys.path.insert(0, "src")
 
 from graham_width import (
@@ -18,6 +19,7 @@ from itertools import combinations
 def test_build_orderings_invariant():
     """Lemma 1: prefix sums of P_order and N_order share only 0."""
     import random
+
     random.seed(4)
     for _ in range(2000):
         P = random.sample(range(1, 30), random.randint(1, 8))
@@ -70,6 +72,7 @@ def test_corollary_consecutive():
 
 def test_integer_version_backtracking_ground_truth():
     """Ground truth: every small nonzero integer set has a valid ordering (backtracking)."""
+
     def bt(A):
         elems = tuple(sorted(set(A), key=lambda x: -abs(x)))
         elems = tuple(x for x in elems if x != 0)
@@ -79,6 +82,7 @@ def test_integer_version_backtracking_ground_truth():
         used = [False] * n
         seen = set()
         cur = 0
+
         def rec(k):
             nonlocal cur
             if k == n:
@@ -99,9 +103,11 @@ def test_integer_version_backtracking_ground_truth():
                 seen.discard(nxt)
                 used[i] = False
             return False
+
         return rec(0)
 
     import random
+
     random.seed(5)
     for _ in range(3000):
         A = random.sample(range(-14, 15), random.randint(1, 9))
@@ -111,6 +117,7 @@ def test_integer_version_backtracking_ground_truth():
 
 def test_width_construction_random_integers():
     import random
+
     random.seed(3)
     for _ in range(600):
         n = random.randint(1, 9)
@@ -126,18 +133,26 @@ def test_width_construction_random_integers():
         assert is_valid_integers(ordering), f"Not valid integers: {A}"
         assert range_width(ordering) < p, f"Range width >= p: {A}"
 
+
 try:
     from hypothesis import given, settings, strategies as st
 except ImportError:
-    st = None
+    st = None  # type: ignore
 
 if st is not None:
+
     @settings(max_examples=500, deadline=None)
-    @given(st.sampled_from([5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]), st.data())
+    @given(
+        st.sampled_from([5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]), st.data()
+    )
     def test_width_hypothesis_fuzz(p, data):
         elems = list(range(1, p))
         # Draw a subset of elements up to a reasonable size
-        subset = data.draw(st.lists(st.sampled_from(elems), min_size=1, max_size=min(p - 1, 40), unique=True))
+        subset = data.draw(
+            st.lists(
+                st.sampled_from(elems), min_size=1, max_size=min(p - 1, 40), unique=True
+            )
+        )
 
         half_p = p // 2
         reps = [(a % p) - p if (a % p) > half_p else (a % p) for a in subset]
@@ -153,6 +168,7 @@ if st is not None:
                 # The theorem/implementation handles this specific case
                 assert len(ordering) == len(subset)
 
+
 def test_width_condition_cross_check_brute_force():
     # Cross-check width condition vs brute force
     for p in [7, 11, 13]:
@@ -166,6 +182,7 @@ def test_width_condition_cross_check_brute_force():
                 if sP < p and sN < p:
                     # brute force existence
                     import itertools
+
                     bf = None
                     for perm in itertools.permutations(reps):
                         seen, ss = set(), 0
@@ -180,4 +197,6 @@ def test_width_condition_cross_check_brute_force():
                             bf = True
                             break
                     construct_ok = is_valid_mod_p(valid_ordering_width(subset, p), p)
-                    assert construct_ok == (bf is not None), f"{p}, {subset}, {construct_ok}, {bf}"
+                    assert construct_ok == (
+                        bf is not None
+                    ), f"{p}, {subset}, {construct_ok}, {bf}"

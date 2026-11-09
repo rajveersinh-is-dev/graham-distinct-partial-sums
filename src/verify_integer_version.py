@@ -15,7 +15,7 @@
 
 from __future__ import annotations
 
-from typing import Iterable, List, Tuple
+from typing import Iterable, List, Tuple, Sequence
 from kravitz import valid_ordering_kravitz as valid_ordering_integers
 
 
@@ -33,7 +33,7 @@ def is_valid(ordering: Iterable[int]) -> bool:
     return len(sums) == len(set(sums))
 
 
-def verify(A: Iterable[int]) -> Tuple[List[int], List[int], bool]:
+def verify(A: Sequence[int]) -> Tuple[List[int], List[int], bool]:
     ordering = valid_ordering_integers(A)
     sums = partial_sums(ordering)
     return ordering, sums, is_valid(ordering)
