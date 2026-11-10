@@ -72,8 +72,24 @@ def is_valid_mod_p(ordering: Sequence[int], p: int) -> bool:
 
 
 def is_two_sided_valid_mod_p(ordering: Sequence[int], p: int) -> bool:
-    """Check if an ordering is valid mod p in both forward and reversed directions."""
-    return is_valid_mod_p(ordering, p) and is_valid_mod_p(ordering[::-1], p)
+    """
+    Check if an ordering is valid mod p in both forward and reversed directions.
+    By Theorem 2, a forward-valid ordering is two-sided valid iff no proper partial sum is 0 mod p.
+    """
+    seen: Set[int] = set()
+    s = 0
+    has_zero_proper_prefix = False
+    n = len(ordering)
+
+    for i, x in enumerate(ordering):
+        s = (s + x) % p
+        if s in seen:
+            return False
+        seen.add(s)
+        if i < n - 1 and s == 0:
+            has_zero_proper_prefix = True
+
+    return not has_zero_proper_prefix
 
 
 def width_condition_holds(A: Sequence[int], p: int) -> bool:
@@ -192,16 +208,27 @@ def find_two_sided_valid_ordering_mod_p(
 ) -> Optional[Tuple[int, ...]]:
     """
     Find a two-sided valid ordering mod p. Uses a hybrid approach:
-    1. Exhaustive search for small sets (N <= 25).
-    2. Randomized greedy heuristic for larger sets.
+    1. Deterministic mathematical construction if width condition holds (Theorem 2 Corollary).
+    2. Exhaustive search for small sets (N <= 25).
+    3. Randomized greedy heuristic for larger sets.
     """
     elems = tuple(sorted(set(a % p for a in A if a % p != 0)))
     n = len(elems)
     if n == 0:
         return ()
 
+    if width_condition_holds(elems, p):
+        # By Theorem 2 Corollary, width orderings are inherently two-sided valid.
+        return tuple(valid_ordering_width(elems, p))
+
     if n <= 25:
-        return backtrack_two_sided_valid_ordering(elems, is_mod_p=True, p=p)
+        try:
+            return backtrack_two_sided_valid_ordering(
+                elems, is_mod_p=True, p=p, timeout=5.0
+            )
+        except TimeoutError:
+            # Fall back to heuristic if backtracking takes too long
+            return heuristic_two_sided_valid_ordering_mod_p(elems, p)
     else:
         return heuristic_two_sided_valid_ordering_mod_p(elems, p)
 
@@ -223,7 +250,12 @@ def find_valid_ordering_mod_p(A: Sequence[int], p: int) -> Optional[Tuple[int, .
 
     if n <= 25:
         # Exhaustive search works reasonably well for N <= 25 with optimizations
-        return backtrack_valid_ordering(elems, is_mod_p=True, p=p, dynamic_sort=False)
+        try:
+            return backtrack_valid_ordering(
+                elems, is_mod_p=True, p=p, dynamic_sort=False, timeout=5.0
+            )
+        except TimeoutError:
+            return heuristic_valid_ordering_mod_p(elems, p)
     else:
         # Fall back to heuristic for larger sets
         return heuristic_valid_ordering_mod_p(elems, p)

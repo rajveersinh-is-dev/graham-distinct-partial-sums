@@ -72,3 +72,32 @@ def test_backtrack_hard_integer_case():
 
     assert ordering is not None, "Failed to find ordering"
     assert is_valid_integers(ordering), "Invalid integer ordering"
+
+
+import pytest
+
+
+import pytest
+import time
+from unittest.mock import patch
+
+
+def test_backtrack_timeout_raised():
+    """Verify that the backtracking search correctly raises TimeoutError when the limit is exceeded."""
+    from graham_backtrack import backtrack_valid_ordering
+
+    elems = list(range(1, 10))
+    # We mock time.time so that the second call returns a huge number
+    with patch("time.time", side_effect=[0, 100, 200, 300]):
+        with pytest.raises(TimeoutError):
+            backtrack_valid_ordering(elems, is_mod_p=False, timeout=5.0)
+
+
+def test_backtrack_two_sided_timeout_raised():
+    """Verify that the two-sided backtracking search correctly raises TimeoutError."""
+    from graham_backtrack import backtrack_two_sided_valid_ordering
+
+    elems = list(range(1, 10))
+    with patch("time.time", side_effect=[0, 100, 200, 300]):
+        with pytest.raises(TimeoutError):
+            backtrack_two_sided_valid_ordering(elems, is_mod_p=True, p=29, timeout=5.0)

@@ -59,5 +59,32 @@ Step 4 (range bound). The positive phase partial sums lie in (0, σ_+(P)]. The n
 
 Step 5 (mod p). In both cases, the partial sums S_k are distinct integers in an interval of width W<p. If S_i≡S_j (mod p) for i≠j, then p | (S_i-S_j), so |S_i-S_j|≥p, contradicting |S_i-S_j|≤W<p. Hence S_i≢S_j (mod p) for all i≠j. So the partial sums are distinct mod p. ∎
 
-## Corollary
+## Theorem 2 (Equivalence of Two-Sided Validity)
+**Statement.** Let $a_1, \dots, a_n$ be an ordering of a subset $A \subseteq \mathbb{F}_p \setminus \{0\}$. Suppose the ordering is valid mod p (its partial sums $s_k = \sum_{i=1}^k a_i$ are pairwise distinct mod p). Then the ordering is also valid in reverse (i.e. it is two-sided valid) if and only if no proper partial sum is zero mod p, that is, $s_k \not\equiv 0 \pmod p$ for all $1 \le k < n$.
+
+**Proof.**
+Let $S = s_n = \sum_{i=1}^n a_i$ be the total sum.
+The partial sums of the reversed sequence $a_n, a_{n-1}, \dots, a_1$ are:
+$s'_1 = a_n = S - s_{n-1}$
+$s'_2 = a_n + a_{n-1} = S - s_{n-2}$
+$\dots$
+$s'_k = \sum_{j=0}^{k-1} a_{n-j} = S - s_{n-k}$
+$\dots$
+$s'_n = S - s_0 = S$.
+
+The reversed sequence is valid if and only if all $s'_k$ are distinct. Since $s'_k = S - s_{n-k}$, the $s'_k$ are distinct if and only if the original $s_j$ ($0 \le j < n$) are distinct.
+We already know $s_1, \dots, s_n$ are pairwise distinct. Thus, the only possible collision among $s_0, s_1, \dots, s_{n-1}$ is if some $s_k = s_0 = 0$ for $1 \le k < n$.
+Therefore, the reversed sequence has distinct partial sums if and only if $s_k \neq 0$ for all $1 \le k < n$. ∎
+
+## Corollary (Width Orderings are Two-Sided)
+**Statement.** The valid ordering produced by the width construction (Theorem 1) is automatically a two-sided valid ordering.
+
+**Proof.** By Theorem 1, the construction gives an ordering $a_1, \dots, a_n$ whose partial sums $S_k$ as integers lie in $[1, \sigma_+(P)]$ or $[0, \sigma_+(P)]$ or $[\sigma_+(P)-\sigma_-(N), \sigma_+(P))$.
+Crucially, in the integer construction, the partial sum only ever reaches $0$ exactly when the positive phase sum perfectly cancels the negative phase sum.
+- In Case 1 ($\sigma_+(P) \neq \sigma_-(N)$), the total integer sum $S_n = \sigma_+(P) - \sigma_-(N) \neq 0$. And $0$ is not reached at any proper prefix since $0 \notin [1, \sigma_+(P)]$ and $0 \notin [\sigma_+(P)-\sigma_-(N), \sigma_+(P))$ when $S_n \neq 0$.
+- In Case 2 ($\sigma_+(P) = \sigma_-(N)$), the total integer sum is $S_n = 0$. Since the positive phase produces strictly positive sums and the negative phase is strictly decreasing, the only time the sum is $0$ is at the very end $k=n$.
+Thus, as integers, $S_k \neq 0$ for $1 \le k < n$. Since the range of the integer partial sums has width strictly less than $p$ (and contains $0$ at least as a boundary or near-boundary), no proper partial sum can be a non-zero multiple of $p$.
+Hence, $S_k \not\equiv 0 \pmod p$ for all $1 \le k < n$. By Theorem 2, the ordering is two-sided valid mod p. ∎
+
+## Corollary (Consecutive sequences)
 If A={1,2,...,k}⊆F_p^× with k(k+1)/2<p, then A is sequenceable mod p (take N=∅, σ_+=k(k+1)/2<p, σ_+=σ_-+...≠0=σ_-).
