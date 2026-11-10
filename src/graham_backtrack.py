@@ -1,8 +1,15 @@
 from typing import Sequence, Optional, Tuple
 
 
+import time
+
+
 def backtrack_valid_ordering(
-    elems: Sequence[int], is_mod_p: bool = False, p: int = 1, dynamic_sort: bool = False
+    elems: Sequence[int],
+    is_mod_p: bool = False,
+    p: int = 1,
+    dynamic_sort: bool = False,
+    timeout: Optional[float] = None,
 ) -> Optional[Tuple[int, ...]]:
     """
     Exhaustive search for a valid ordering (distinct partial sums).
@@ -11,6 +18,7 @@ def backtrack_valid_ordering(
     :param is_mod_p: If True, do arithmetic modulo p
     :param p: The modulus (used only if is_mod_p is True)
     :param dynamic_sort: If True, order candidates dynamically at each step to keep running sum small
+    :param timeout: Time limit in seconds. Raises TimeoutError if exceeded.
     """
     n = len(elems)
     if n == 0:
@@ -24,6 +32,8 @@ def backtrack_valid_ordering(
     seen = set()
     result = [0] * n
 
+    start_time = time.time() if timeout is not None else None
+
     # Fixed order of elements for indexing
     if dynamic_sort:
         order = sorted(elems, key=lambda x: (abs(x), x))
@@ -32,6 +42,10 @@ def backtrack_valid_ordering(
 
     def bt(k: int, cur: int) -> bool:
         nonlocal used_mask
+
+        if timeout is not None and start_time is not None and time.time() - start_time > timeout:
+            raise TimeoutError("Backtracking search exceeded time limit.")
+
         if k == n:
             return True
 
@@ -79,7 +93,10 @@ def backtrack_valid_ordering(
 
 
 def backtrack_two_sided_valid_ordering(
-    elems: Sequence[int], is_mod_p: bool = False, p: int = 1
+    elems: Sequence[int],
+    is_mod_p: bool = False,
+    p: int = 1,
+    timeout: Optional[float] = None,
 ) -> Optional[Tuple[int, ...]]:
     """
     Exhaustive search for a two-sided valid ordering mod p.
@@ -98,6 +115,8 @@ def backtrack_two_sided_valid_ordering(
 
     order = list(elems)
 
+    start_time = time.time() if timeout is not None else None
+
     def is_two_sided_valid(ordering: Sequence[int]) -> bool:
         # Check reverse direction
         seen_rev = set()
@@ -113,6 +132,10 @@ def backtrack_two_sided_valid_ordering(
 
     def bt(k: int, cur: int) -> bool:
         nonlocal used_mask
+
+        if timeout is not None and start_time is not None and time.time() - start_time > timeout:
+            raise TimeoutError("Backtracking search exceeded time limit.")
+
         if k == n:
             return is_two_sided_valid(result)
 

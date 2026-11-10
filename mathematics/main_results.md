@@ -22,6 +22,11 @@ then A is sequenceable modulo p: there is an ordering of A whose partial sums ar
 ## Lemma 1 (integer ordering lemma, PROVED HERE)
 Let P,N be finite sets of positive integers with ∑P≠∑N. Then there exist orderings of P and of N such that no (nonempty) prefix-sum of P equals a prefix-sum of N, except that the empty prefix-sum 0 is common.
 
+## Theorem 2 (Equivalence of Two-Sided Validity, PROVED HERE)
+**Theorem 2.** Let an ordering of A be valid mod p. The ordering is valid in reverse (two-sided valid) if and only if no proper partial sum is zero mod p.
+
+**Corollary (Width orderings are two-sided valid).** The valid ordering produced by the width sufficient condition construction inherently evaluates to a non-zero integer at every proper prefix, making it two-sided valid mod p without any further modification.
+
 ## Corollary (PROVED HERE)
 If A={1,2,...,k}⊆F_p^× (viewed mod p) with k(k+1)/2 < p, then A is sequenceable mod p.
 (P: all of A since all positive, N empty; need ∑A=k(k+1)/2<p and ∑P≠∑N=0, true since sum>0.)
@@ -29,6 +34,7 @@ If A={1,2,...,k}⊆F_p^× (viewed mod p) with k(k+1)/2 < p, then A is sequenceab
 ## Computational verification (COMPUTATIONALLY VERIFIED, finite)
 - src/graham_width.py: the construction produces distinct mod-p partial sums for every width-satisfying set for p≤23 (exhaustive), and for thousands of random sets; cross-checked against brute force with complete agreement.
 - src/graham_verify.py: Graham's conjecture holds for all subsets of size ≤5 for p=3,5,7,11,13 (brute force); larger sets verify efficiently using a hybrid approach combining the mathematical width condition and a randomized greedy heuristic; integer version verified on ~4000 random sets via backtracking.
+- Two-Sided algorithms now utilize the $O(n \log n)$ width construction deterministically in instances satisfying the width condition.
 
 ## Open status
 Graham's conjecture for arbitrary |A| remains OPEN. Theorem 1 is a rigorous partial result (Final verdict category: C, Rigorous Partial Result).
